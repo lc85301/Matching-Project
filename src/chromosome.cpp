@@ -147,12 +147,12 @@ double Chromosome::matching() const{
 	return line_fitness;
 }
 
-void output() const
+void Chromosome:: output() const
 {
 	//!! 7 is a const
 	cout << "chromosome result\n";
 	for (int i = 0; i < length/7; ++i) {
-		cout << "electric length of " << i << "th line is: " <<<< endl;
+		cout << "electric length of " << i << "th line is: " << get_line_length(i)<< endl;
 	}
 }
 

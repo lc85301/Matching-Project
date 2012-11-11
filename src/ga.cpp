@@ -351,7 +351,7 @@ void GA::oneRun (bool output)
         }
         stFitness.record (fitness);
     }
-    population[bestIndex]->output();
+    population[bestIndex].output();
 
     if (output)
         showStatistics ();
