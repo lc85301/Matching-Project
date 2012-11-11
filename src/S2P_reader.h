@@ -39,7 +39,7 @@ class S2P_reader
 {
     public:
 		S2P_reader (){};
-        S2P_reader (string filename) {
+        S2P_reader init(string filename) {
             double freq;
             double rho;
             double theta;

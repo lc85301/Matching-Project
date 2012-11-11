@@ -69,8 +69,8 @@ double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,s
 
     Chromosome::center_freq = centerfreq;
     Chromosome::device_list = devicelist;
-    Chromosome::source_list = S2P_reader(source_file);
-    Chromosome::target_list = S2P_reader(target_file);
+    Chromosome::source_list.init(source_file);
+    Chromosome::target_list.init(target_file);
 
     for (i = 0; i < nInitial; i++) {
         population[i].init (ell);
