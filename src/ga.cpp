@@ -152,6 +152,7 @@ void GA::rwSelection ()
 // tournamentSelection without replacement
 void GA::tournamentSelection ()
 {
+
     int i, j;
 
     // Adjusting population size 
@@ -180,7 +181,7 @@ void GA::tournamentSelection ()
     for (i = 0; i < nNextGeneration; i++) {
 
         int winner = 0;
-        double winnerFitness = -DBL_MAX;
+        double winnerFitness = DBL_MAX;
 
         for (j = 0; j < selectionPressure; j++) {
             int challenger = randArray[selectionPressure * i + j];
@@ -224,8 +225,8 @@ void GA::crossover ()
 void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2)
 {
     if (myRand.uniform () < pc) {
-	onePointXO (p1, p2, c1, c2);
-//      uniformXO (p1, p2, c1, c2, 0.5);
+	//onePointXO (p1, p2, c1, c2);
+    uniformXO (p1, p2, c1, c2, 0.5);
     }
     else {
         c1 = p1;
@@ -353,7 +354,7 @@ void GA::oneRun (bool output)
     }
     population[bestIndex].output();
 
-    if (output)
+    //if (output)
         showStatistics ();
 
     generation++;

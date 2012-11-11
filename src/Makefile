@@ -1,7 +1,7 @@
 
 CXX = g++
-#CXXFLAGS = -O0 -g -Wall
-CXXFLAGS = -O2 -Wall
+CXXFLAGS = -O0 -g -Wall
+#CXXFLAGS = -O2 -Wall
 INCLUDE = 
 TLIB = 
 

@@ -25,23 +25,23 @@ double getnumber(string out_string, double default_value);
 
 int main (int argc, char *argv[])
 {
-	int ell, nInitial, selectionPressure, maxGen, maxFe, repeat;
+	int ell, nInitial, selectionPressure, maxGen, maxFe/*, repeat*/;
     string source_file="source", target_file="target", device_list="";
 	double pc, pm, center_freq;
 
 	ell = int(getnumber("please input the problem size", 1));
-	nInitial = int(getnumber("please input the poulation size", 10000));
+	nInitial = int(getnumber("please input the poulation size", 500));
 	selectionPressure = int(getnumber("please input the selection pressure", 2));
 	pc = getnumber("please input the probability of crossover", 1);
 	pm = getnumber("please input the probability of mutation", 0);
 	maxGen = int(getnumber("please input the max generation", 20));
 	maxFe = int(getnumber("please input the max fe", 10));
-	center_freq = getnumber("please input the center freq", 24);
+	center_freq = getnumber("please input the center freq", 2.4E9);
     cout << "please input the device structure." << endl;
     cin >> device_list;
 
 
-    int i;
+    //int i;
 
     Statistics stGenS, stGenF;
     int usedGen;
