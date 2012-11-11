@@ -1,16 +1,17 @@
-/***************************************************************************
+/*;***************************************************************************
  *   Copyright (C) 2004 by Tian-Li Yu                                      *
  *   tianliyu@cc.ee.ntu.edu.tw                                             *
  ***************************************************************************/
 
 #include <cstdio>
 #include <vector>
+#include <cmath>
 #include "global.h"
 #include "chromosome.h"
 #include "line_operator.cpp"
 
-S2P_reader Chromosome::source_list(" ");
-S2P_reader Chromosome::target_list(" ");
+S2P_reader Chromosome::source_list;
+S2P_reader Chromosome::target_list;
 string Chromosome::device_list;
 double Chromosome::center_freq;
 
@@ -112,32 +113,35 @@ double Chromosome::matching() const{
 	int line_length;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
+	
 
-	for (vector<freq_response>::iterator it = source.begin();
-		 it != source.end();
-		 ++it
+	for (vector<freq_response>::iterator s_it = source.begin(), t_it = target.begin();
+		 s_it != source.end(), t_it != target.end();
+		 ++s_it, ++t_it
 		 ) {
 		list_index = 0;
 		while (Chromosome::device_list[list_index] != EOF) {
-			point = it->S11();
-			freqratio = it->freq() / Chromosome::center_freq;
+			point = s_it->S11();
+			freqratio = s_it->freq() / Chromosome::center_freq;
 			line_length = get_line_length(list_index);
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
-				  ShortStub(point, freqratio,line_length );
+				  point = ShortStub(point, freqratio,line_length );
 				  break;
 			  case 't':
 			  case 'T':
-				  Tline(point, freqratio, line_length);
+				  point = Tline(point, freqratio, line_length);
 				  break;
 			  case 'o':
 			  case 'O':
-				  Tline(point, freqratio, line_length);
+				  point = OpenStub(point, freqratio, line_length);
 				  break;
 			}
 			++list_index;
 		}
+		fitness += abs(point - t_it->S11());
+		++t_it;
 	}
 	return fitness;
 }

@@ -41,22 +41,6 @@ int main (int argc, char *argv[])
     cout << "please input the device structure." << endl;
     cin >> device_list;
 
-    //if (argc != 9) {
-    //    printf ("GA ell nInitial selectionPressure pc pm maxGen maxFe repeat\n");
-    //    return -1;
-    //}
-
-    //int ell = atoi (argv[1]);    // problem size
-    //                             // initial population size
-    //int nInitial = atoi (argv[2]);
-    //                             // selection pressure
-    //int selectionPressure = atoi (argv[3]);
-    //double pc = atof (argv[4]);  // pc
-    //double pm = atof (argv[5]);  // pm
-    //int maxGen = atoi (argv[6]); // max generation
-    //int maxFe = atoi (argv[7]);  // max fe
-    //int repeat = atoi (argv[8]); // how many time to repeat
-
     int i;
 
     Statistics stGenS, stGenF;

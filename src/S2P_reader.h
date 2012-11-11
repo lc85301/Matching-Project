@@ -38,6 +38,7 @@ class freq_response
 class S2P_reader
 {
     public:
+		S2P_reader (){};
         S2P_reader (string filename) {
             double freq;
             double rho;
