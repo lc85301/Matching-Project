@@ -114,18 +114,14 @@ double Chromosome::matching() const{
 	int line_length;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
-	int i = 0;
 
 	for (vector<freq_response>::iterator s_it = source.begin(), t_it = target.begin();
 		 s_it != source.end();
 		 ++s_it, ++t_it
 		 ) {
 		list_index = 0;
-		//cout << "device_list " << Chromosome::device_list << endl;
 		while (Chromosome::device_list[list_index] !='\0' ) {
-			//cout << "run " << i++ << " times" << endl;
 			point = s_it->S11();
-			//cout << point << endl;
 			freqratio = s_it->freq() / Chromosome::center_freq;
 			line_length = get_line_length(list_index);
 			switch(Chromosome::device_list[list_index]){
