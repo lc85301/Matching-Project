@@ -6,6 +6,8 @@
 #ifndef _CHROMOSOME_H
 #define _CHROMOSOME_H
 
+#include "S2P_reader.h"
+
 
 class Chromosome
 {
@@ -29,6 +31,10 @@ class Chromosome
 
         double oneMax () const;
 
+		int get_line_length (int ) const;
+
+		double matching () const;
+
         bool isEvaluated () const;
 
         void printf () const;
@@ -37,6 +43,10 @@ class Chromosome
 
         double getMaxFitness () const;
 
+		static S2P_reader source_list;
+		static S2P_reader target_list;
+		static string device_list;
+		static double center_freq;
     protected:
         bool *gene;
         int length;

@@ -3,9 +3,16 @@
  *   tianliyu@cc.ee.ntu.edu.tw                                             *
  ***************************************************************************/
 
-#include <stdio.h>
+#include <cstdio>
+#include <vector>
 #include "global.h"
 #include "chromosome.h"
+#include "line_operator.cpp"
+
+S2P_reader Chromosome::source_list(" ");
+S2P_reader Chromosome::target_list(" ");
+string Chromosome::device_list;
+double Chromosome::center_freq;
 
 Chromosome::Chromosome ()
 {
@@ -26,7 +33,6 @@ Chromosome::~Chromosome ()
 {
     delete[]gene;
 }
-
 
 void Chromosome::init (int n_length)
 {
@@ -79,6 +85,62 @@ double Chromosome::evaluate ()
     return oneMax ();
 }
 
+//********************************************
+// Function: get_line_length
+// Description: get the length of specific part
+//	ex: chromosome 10101101....1111111
+//	get_line_length(0), return 127
+//********************************************
+int Chromosome::get_line_length(int part_num) const{
+	int start_point = part_num * 7;
+	int ratio = 1;
+	int line_length = 0;
+	for (int i = start_point; i < start_point+7; ++i) {
+		if (gene[i]) {
+			line_length += ratio;
+		}
+		ratio *= 2;
+	}
+	return line_length;
+}
+
+double Chromosome::matching() const{
+	double fitness;
+	int list_index = 0;
+	complex<double> point;
+	double freqratio;
+	int line_length;
+	vector<freq_response>& source = Chromosome::source_list.get_list();
+	vector<freq_response>& target = Chromosome::target_list.get_list();
+
+	for (vector<freq_response>::iterator it = source.begin();
+		 it != source.end();
+		 ++it
+		 ) {
+		list_index = 0;
+		while (Chromosome::device_list[list_index] != EOF) {
+			point = it->S11();
+			freqratio = it->freq() / Chromosome::center_freq;
+			line_length = get_line_length(list_index);
+			switch(Chromosome::device_list[list_index]){
+			  case 's':
+			  case 'S':
+				  ShortStub(point, freqratio,line_length );
+				  break;
+			  case 't':
+			  case 'T':
+				  Tline(point, freqratio, line_length);
+				  break;
+			  case 'o':
+			  case 'O':
+				  Tline(point, freqratio, line_length);
+				  break;
+			}
+			++list_index;
+		}
+	}
+	return fitness;
+}
 
 // OneMax
 double Chromosome::oneMax () const
