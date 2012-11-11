@@ -39,7 +39,7 @@ int main (int argc, char *argv[])
 	repeat = int(getnumber("please input the times of repeat", 20));
 
     cout << "please input the device structure." << endl;
-    cin >> device;
+    cin >> device_list;
 
     //if (argc != 9) {
     //    printf ("GA ell nInitial selectionPressure pc pm maxGen maxFe repeat\n");

@@ -6,6 +6,9 @@
 //  You could use get_list() to obtain a reference of the vector list.
 //*************************************************
 
+#ifndef _S2P_READER_
+#define _S2P_READER_
+
 #include <iostream>
 #include <vector>
 #include <complex>
@@ -40,7 +43,6 @@ class S2P_reader
             double rho;
             double theta;
             char buffer[50];
-            int size = 0;
 
             _iFile = fopen (filename.c_str() , "r");
             if (_iFile == NULL){
@@ -71,3 +73,5 @@ class S2P_reader
         FILE * _iFile;
         vector<freq_response> freq_list;
 };
+
+#endif
