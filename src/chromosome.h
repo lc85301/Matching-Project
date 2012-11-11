@@ -31,9 +31,11 @@ class Chromosome
 
         double oneMax () const;
 
+		// add by yodalee and GodGodmouse
 		int get_line_length (int ) const;
-
 		double matching () const;
+		void output() const;
+		// end add
 
         bool isEvaluated () const;
 
