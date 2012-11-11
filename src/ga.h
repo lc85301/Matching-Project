@@ -9,6 +9,8 @@
 #include "chromosome.h"
 #include "statistics.h"
 #include "myrand.h"
+#include <string>
+using namespace std;
 
 class GA
 {
@@ -16,12 +18,12 @@ class GA
     public:
         GA ();
         GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, int n_maxGen, int n_maxFe);
+            double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq);
 
         ~GA ();
 
         void init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, int n_maxGen, int n_maxFe);
+            double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq);
 
         void initializePopulation ();
         void evaluate ();

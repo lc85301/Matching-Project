@@ -17,6 +17,8 @@
 #include "chromosome.h"
 #include "global.h"
 
+#define GENE_LENGTH 7
+
 using namespace std;
 
 double getnumber(string out_string, double default_value);
@@ -24,9 +26,10 @@ double getnumber(string out_string, double default_value);
 int main (int argc, char *argv[])
 {
 	int ell, nInitial, selectionPressure, maxGen, maxFe, repeat;
-	double pc, pm;
+    string source_file="source", target_file="target", device_list="";
+	double pc, pm, center_freq;
 
-	ell = int(getnumber("please input the problem size", 16));
+	ell = int(getnumber("please input the problem size", 1));
 	nInitial = int(getnumber("please input the poulation size", 10000));
 	selectionPressure = int(getnumber("please input the selection pressure", 2));
 	pc = getnumber("please input the probability of crossover", 1);
@@ -34,6 +37,9 @@ int main (int argc, char *argv[])
 	maxGen = int(getnumber("please input the max generation", 20));
 	maxFe = int(getnumber("please input the max fe", 10));
 	repeat = int(getnumber("please input the times of repeat", 20));
+
+    cout << "please input the device structure." << endl;
+    cin >> device;
 
     //if (argc != 9) {
     //    printf ("GA ell nInitial selectionPressure pc pm maxGen maxFe repeat\n");
@@ -60,7 +66,7 @@ int main (int argc, char *argv[])
 
     for (i = 0; i < repeat; i++) {
 
-        GA ga (ell, nInitial, selectionPressure, pc, pm, maxGen, maxFe);
+        GA ga ( ell*GENE_LENGTH, nInitial, selectionPressure, pc, pm, maxGen, maxFe, source_file, target_file, device_list, center_freq);
 
         if (repeat == 1)
             usedGen = ga.doIt (true);

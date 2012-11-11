@@ -4,6 +4,7 @@
  ***************************************************************************/
 
 #include <stdio.h>
+#include <string>
 #include <stdlib.h>
 #include <float.h>
 #include <math.h>
@@ -11,6 +12,8 @@
 #include "statistics.h"
 #include "myrand.h"
 #include "ga.h"
+#include "S2P_reader.h"
+using namespace std;
 
 GA::GA ()
 {
@@ -30,9 +33,9 @@ GA::GA ()
 }
 
 
-GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, int n_maxGen, int n_maxFe)
+GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq)
 {
-    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, n_maxGen, n_maxFe);
+    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq);
 }
 
 
@@ -47,7 +50,7 @@ GA::~GA ()
 
 void
 GA::init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-double n_pm, int n_maxGen, int n_maxFe)
+double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq)
 {
     int i;
 
@@ -63,6 +66,11 @@ double n_pm, int n_maxGen, int n_maxFe)
     population = new Chromosome[nInitial];
     offspring = new Chromosome[nInitial];
     selectionIndex = new int[nInitial];
+
+    Chromosome::source_list = S2P_reader(source_file);
+    Chromosome::target_list = S2P_reader(target_file);
+    Chromosome::center_freq = centerfreq;
+    Chromosome::device_list = devicelist;
 
     for (i = 0; i < nInitial; i++) {
         population[i].init (ell);
