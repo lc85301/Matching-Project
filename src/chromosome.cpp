@@ -83,7 +83,8 @@ bool Chromosome::isEvaluated () const
 double Chromosome::evaluate ()
 {
     evaluated = true;
-    return oneMax ();
+    //return oneMax ();
+	return matching ();
 }
 
 //********************************************
@@ -106,7 +107,7 @@ int Chromosome::get_line_length(int part_num) const{
 }
 
 double Chromosome::matching() const{
-	double fitness;
+	double line_fitness;
 	int list_index = 0;
 	complex<double> point;
 	double freqratio;
@@ -140,11 +141,21 @@ double Chromosome::matching() const{
 			}
 			++list_index;
 		}
-		fitness += abs(point - t_it->S11());
+		line_fitness += abs(point - t_it->S11());
 		++t_it;
 	}
-	return fitness;
+	return line_fitness;
 }
+
+void output() const
+{
+	//!! 7 is a const
+	cout << "chromosome result\n";
+	for (int i = 0; i < length/7; ++i) {
+		cout << "electric length of " << i << "th line is: " <<<< endl;
+	}
+}
+
 
 // OneMax
 double Chromosome::oneMax () const
