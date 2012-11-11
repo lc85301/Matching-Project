@@ -36,10 +36,10 @@ int main (int argc, char *argv[])
 	pm = getnumber("please input the probability of mutation", 0);
 	maxGen = int(getnumber("please input the max generation", 20));
 	maxFe = int(getnumber("please input the max fe", 10));
-	repeat = int(getnumber("please input the times of repeat", 20));
 
     cout << "please input the device structure." << endl;
     cin >> device_list;
+	center_freq = getnumber("please input the center freq", 24);
 
     int i;
 
@@ -47,30 +47,24 @@ int main (int argc, char *argv[])
     int usedGen;
 
     int failNum = 0;
+	
 
-    for (i = 0; i < repeat; i++) {
+	GA ga ( ell*GENE_LENGTH, nInitial, selectionPressure, pc, pm, maxGen, maxFe, source_file, target_file, device_list, center_freq);
 
-        GA ga ( ell*GENE_LENGTH, nInitial, selectionPressure, pc, pm, maxGen, maxFe, source_file, target_file, device_list, center_freq);
+	usedGen = ga.doIt (false);
 
-        if (repeat == 1)
-            usedGen = ga.doIt (true);
-        else
-            usedGen = ga.doIt (false);
+	//Chromosome ch(ell);
+	//if (ga.stFitness.getMax() < ch.getMaxFitness()) {
+	//	printf ("-");
+	//	failNum++;
+	//	stGenF.record (usedGen);
+	//}
+	//else {
+	//	printf ("+");
+	//	stGenS.record (usedGen);
+	//}
 
-        Chromosome ch(ell);
-        if (ga.stFitness.getMax() < ch.getMaxFitness()) {
-            printf ("-");
-            failNum++;
-            stGenF.record (usedGen);
-        }
-        else {
-            printf ("+");
-            stGenS.record (usedGen);
-        }
-
-        fflush (NULL);
-
-    }
+	fflush (NULL);
 
     printf ("\nAverage Gen of Success: %f\n", stGenS.getMean());
     printf ("Average Gen of Failure: %f\n", stGenF.getMean());

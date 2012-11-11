@@ -67,10 +67,10 @@ double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,s
     offspring = new Chromosome[nInitial];
     selectionIndex = new int[nInitial];
 
-    Chromosome::source_list = S2P_reader(source_file);
-    Chromosome::target_list = S2P_reader(target_file);
     Chromosome::center_freq = centerfreq;
     Chromosome::device_list = devicelist;
+    Chromosome::source_list = S2P_reader(source_file);
+    Chromosome::target_list = S2P_reader(target_file);
 
     for (i = 0; i < nInitial; i++) {
         population[i].init (ell);
@@ -375,10 +375,10 @@ bool GA::shouldTerminate ()
     bool termination = false;
 
     // Reach maximal # of function evaluations
-    if (maxFe != -1) {
-        if (fe > maxFe)
-            termination = true;
-    }
+    //if (maxFe != -1) {
+    //    if (fe > maxFe)
+    //        termination = true;
+    //}
 
     // Reach maximal # of generations
     if (maxGen != -1) {
@@ -387,12 +387,12 @@ bool GA::shouldTerminate ()
     }
 
     // Found a satisfactory solution
-    if (stFitness.getMax() >= population[0].getMaxFitness())
-        termination = true;
+    //if (stFitness.getMax() >= population[0].getMaxFitness())
+    //    termination = true;
 
     // The population loses diversity
-    if (stFitness.getMax()-1e-6 < stFitness.getMean())
-	termination = true;
+    //if (stFitness.getMax()-1e-6 < stFitness.getMean())
+	//termination = true;
 
     return termination;
 
