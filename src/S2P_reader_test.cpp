@@ -6,7 +6,8 @@
 #include "S2P_reader.h"
 
 int main(){
-    S2P_reader test("sample.txt");
+    S2P_reader test;
+    test.init("source");
     vector<freq_response>& list = test.get_list();
 
     for(vector<freq_response>::iterator it = list.begin();

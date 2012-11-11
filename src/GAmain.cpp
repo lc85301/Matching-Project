@@ -36,10 +36,10 @@ int main (int argc, char *argv[])
 	pm = getnumber("please input the probability of mutation", 0);
 	maxGen = int(getnumber("please input the max generation", 20));
 	maxFe = int(getnumber("please input the max fe", 10));
-
+	center_freq = getnumber("please input the center freq", 24);
     cout << "please input the device structure." << endl;
     cin >> device_list;
-	center_freq = getnumber("please input the center freq", 24);
+
 
     int i;
 

@@ -39,19 +39,19 @@ class S2P_reader
 {
     public:
 		S2P_reader (){};
-        S2P_reader init(string filename) {
+        void init(string filename) {
             double freq;
             double rho;
             double theta;
-            char buffer[50];
-
+            //char buffer[50];
+ 
             _iFile = fopen (filename.c_str() , "r");
             if (_iFile == NULL){
                 cerr << "Cannot open file!" << endl;
                 exit(EXIT_FAILURE);
             }
 
-            fgets( buffer, 50, _iFile);
+            //fgets( buffer, 50, _iFile);
             while( fscanf(_iFile, "%lf\t%lf / %lf", &freq, &rho, &theta) != EOF){
                 freq_list.push_back(freq_response( freq, rho, theta));
             }

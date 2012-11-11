@@ -186,7 +186,7 @@ void GA::tournamentSelection ()
             int challenger = randArray[selectionPressure * i + j];
             double challengerFitness = population[challenger].getFitness ();
 
-            if (challengerFitness > winnerFitness) {
+            if (challengerFitness < winnerFitness) {
                 winner = challenger;
                 winnerFitness = challengerFitness;
             }
@@ -341,16 +341,17 @@ void GA::oneRun (bool output)
     mutation ();
     replacePopulation ();
 
-    double max = -DBL_MAX;
+    double min = DBL_MAX;
     stFitness.reset ();
     for (i = 0; i < nCurrent; i++) {
         double fitness = population[i].getFitness ();
-        if (fitness > max) {
-            max = fitness;
+        if (fitness < min) {
+            min = fitness;
             bestIndex = i;
         }
         stFitness.record (fitness);
     }
+    population[bestIndex]->output();
 
     if (output)
         showStatistics ();
