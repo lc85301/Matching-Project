@@ -65,20 +65,14 @@ int main (int argc, char *argv[])
 
     ell = device_list.length() * GENE_LENGTH;
     nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
-    cout << "ell: " <<ell<< "nInitial:" <<nInitial<< endl;
+    cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct" <<device_list<< endl;
 
     Statistics stGenS, stGenF;
-    int usedGen;
     int failNum = 0;
 
 	GA ga ( ell, nInitial, selectionPressure, pc, pm, maxGen, maxFe, source_file, target_file, device_list, center_freq);
-	usedGen = ga.doIt (false);
-
+	ga.doIt (false);
 	fflush (NULL);
-
-    printf ("\nAverage Gen of Success: %f\n", stGenS.getMean());
-    printf ("Average Gen of Failure: %f\n", stGenF.getMean());
-    printf ("Total number of Failure: %d\n", failNum);
 
     return EXIT_SUCCESS;
 }
