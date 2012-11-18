@@ -48,7 +48,7 @@ int main (int argc, char *argv[])
                 maxGen = atoi (optarg); // max generation
                 break;
             case 'c':
-                center_freq = atof (argv[6]); // how many time to repeat
+                center_freq = atof (optarg); // how many time to repeat
                 break;
             case 'd':
                 device_list = optarg;
