@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <vector>
 #include <cmath>
+#include <cassert>
 #include "global.h"
 #include "chromosome.h"
 #include "line_operator.cpp"
@@ -93,6 +94,7 @@ double Chromosome::evaluate ()
 //	ex: chromosome 10101101....1111111
 //	get_line_length(0), return 127
 //********************************************
+//!! 7 is a const //
 int Chromosome::get_line_length(int part_num) const{
 	int start_point = part_num * 7;
 	int ratio = 1;
@@ -114,6 +116,8 @@ double Chromosome::matching() const{
 	int line_length;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
+	//source_list and target_list has to be same size
+	assert(source.size() == target.size());
 
 	for (vector<freq_response>::iterator s_it = source.begin(), t_it = target.begin();
 		 s_it != source.end();
@@ -123,11 +127,14 @@ double Chromosome::matching() const{
 		while (Chromosome::device_list[list_index] !='\0' ) {
 			point = s_it->S11();
 			freqratio = s_it->freq() / Chromosome::center_freq;
-			line_length = get_line_length(list_index);
+			line_length = get_line_length(list_index) * freqratio;
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
-				  point = ShortStub(point, freqratio,line_length );
+				  if (line_length < 20) {
+					  line_fitness += DBL_MAX;
+				  }
+				  point = ShortStub(point,line_length );
 				  break;
 			  case 't':
 			  case 'T':
@@ -135,6 +142,9 @@ double Chromosome::matching() const{
 				  break;
 			  case 'o':
 			  case 'O':
+				  if (line_length > 70) {
+					  line_fitness += DBL_MAX;
+				  }
 				  point = OpenStub(point, freqratio, line_length);
 				  break;
 			}
@@ -143,12 +153,13 @@ double Chromosome::matching() const{
 		line_fitness += abs(point - t_it->S11());
 		++t_it;
 	}
-	return line_fitness;
+	//normalize to point size
+	return line_fitness/source.size();
 }
 
 void Chromosome:: output() const
 {
-	//!! 7 is a const
+	//!! 7 is a const !!
 	cout << "chromosome result\n";
 	for (int i = 0; i < length/7; ++i) {
 		cout << "electric length of " << i << "th line is: " << get_line_length(i)<< endl;

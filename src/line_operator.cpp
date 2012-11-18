@@ -2,7 +2,7 @@
 // File: line_operator.cpp
 // Description: This cpp file define some operator in microwave
 // each take a "complex number" and
-// "fratio (freq/Centralfreq)", "electric length(beta)"
+// "electric length(beta)"
 // return the complex gamma
 //  1. Tline(): rotate the complex
 //  2. OpenStub(): Y = jtan(betaL)
@@ -20,29 +20,29 @@
 #include <math.h>
 using namespace std;
 
-complex<double> Tline(complex<double> &in, double fratio, double length);
-complex<double> OpenStub(complex<double> &in, double fratio, double length);
-complex<double> ShortStub(complex<double> &in, double fratio, double length);
+complex<double> Tline(complex<double> &in, double length);
+complex<double> OpenStub(complex<double> &in, double length);
+complex<double> ShortStub(complex<double> &in, double length);
 complex<double> GammaToY(complex<double> &in);
 complex<double> GammaToZ(complex<double> &in);
 complex<double> YToGamma(complex<double> &in);
 complex<double> ZToGamma(complex<double> &in);
 
-complex<double> Tline(complex<double> &in, double fratio, double length){
-	double rotate_phase = (-1)*2*fratio*length*M_PI/180;
+complex<double> Tline(complex<double> &in, double length){
+	double rotate_phase = (-1)*2*length*M_PI/180;
 	double newangle = arg(in) + rotate_phase;
 	while (newangle < 0) { newangle += 2*M_PI; }
 	while (newangle > 2*M_PI) { newangle -= 2*M_PI; }
 	return complex<double>(polar(abs(in), newangle));
 }
-complex<double> OpenStub(complex<double> &in, double fratio, double length){
-	double openy = tan(fratio*length*M_PI/180);
+complex<double> OpenStub(complex<double> &in, double length){
+	double openy = tan(length*M_PI/180);
 	complex<double> y(GammaToY(in));
 	imag(y) = imag(y) + openy;
 	return YToGamma(y);
 }
-complex<double> ShortStub(complex<double> &in, double fratio, double length){
-	double openy = 1/tan(fratio*length*M_PI/180);
+complex<double> ShortStub(complex<double> &in, double length){
+	double openy = 1/tan(length*M_PI/180);
 	complex<double> y(GammaToY(in));
 	imag(y) = imag(y) - openy;
 	return YToGamma(y);
