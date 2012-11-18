@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <vector>
 #include <cmath>
+#include <float.h>
 #include <cassert>
 #include "global.h"
 #include "chromosome.h"
@@ -131,30 +132,24 @@ double Chromosome::matching() const{
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
-				  if (line_length < 20) {
-					  line_fitness += DBL_MAX;
-				  }
 				  point = ShortStub(point,line_length );
 				  break;
 			  case 't':
 			  case 'T':
-				  point = Tline(point, freqratio, line_length);
+				  point = Tline(point, line_length);
 				  break;
 			  case 'o':
 			  case 'O':
-				  if (line_length > 70) {
-					  line_fitness += DBL_MAX;
-				  }
-				  point = OpenStub(point, freqratio, line_length);
+				  point = OpenStub(point, line_length);
 				  break;
 			}
 			++list_index;
 		}
-		line_fitness += abs(point - t_it->S11());
-		++t_it;
+		double temp = abs(point - t_it->S11());
+		line_fitness += temp * temp;
 	}
 	//normalize to point size
-	return line_fitness/source.size();
+	return line_fitness;
 }
 
 void Chromosome:: output() const
