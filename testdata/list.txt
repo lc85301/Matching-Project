@@ -1,2 +1,3 @@
+source_s:		only a short stub
 source_tstot:	SmGamma1 of ne42484
 source_tstot2:	SmGamma2 of ne42484
