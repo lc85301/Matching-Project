@@ -33,9 +33,9 @@ GA::GA ()
 }
 
 
-GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq)
+GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq)
 {
-    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq);
+    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq);
 }
 
 
@@ -50,7 +50,7 @@ GA::~GA ()
 
 void
 GA::init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq)
+double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq)
 {
     int i;
 
@@ -60,6 +60,7 @@ double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,s
     selectionPressure = n_selectionPressure;
     pc = n_pc;
     pm = n_pm;
+    p_winner = p_win;
     maxGen = n_maxGen;
     maxFe = n_maxFe;
 
@@ -79,7 +80,6 @@ double n_pm, int n_maxGen, int n_maxFe, string source_file, string target_file,s
 
     initializePopulation ();
 }
-
 
 void GA::initializePopulation ()
 {
@@ -182,14 +182,30 @@ void GA::tournamentSelection ()
 
         int winner = 0;
         double winnerFitness = DBL_MAX;
+        double temp = myRand.uniform();
 
-        for (j = 0; j < selectionPressure; j++) {
-            int challenger = randArray[selectionPressure * i + j];
-            double challengerFitness = population[challenger].getFitness ();
+        if(temp < p_winner){
+            for (j = 0; j < selectionPressure; j++) {
+                int challenger = randArray[selectionPressure * i + j];
+                double challengerFitness = population[challenger].getFitness ();
 
-            if (challengerFitness < winnerFitness) {
-                winner = challenger;
-                winnerFitness = challengerFitness;
+                if (challengerFitness < winnerFitness) {
+                    winner = challenger;
+                    winnerFitness = challengerFitness;
+                }
+
+            }
+        }
+        else{ // loser wins
+            for (j = 0; j < selectionPressure; j++) {
+                int challenger = randArray[selectionPressure * i + j];
+                double challengerFitness = population[challenger].getFitness ();
+
+                if (challengerFitness > winnerFitness) {
+                    winner = challenger;
+                    winnerFitness = challengerFitness;
+                }
+
             }
 
         }

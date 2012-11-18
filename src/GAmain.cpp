@@ -26,18 +26,21 @@ double getnumber(string out_string, double default_value);
 
 int main (int argc, char *argv[])
 {
-    int ell, nInitial, selectionPressure=2, maxGen=200, maxFe=-1;
+    int ell, nInitial=0, selectionPressure=2, maxGen=200, maxFe=-1;
     string source_file="source", target_file="target", device_list="O";
-    double pc=1, pm=1.0E-6, center_freq=2.4E9;
+    double pc=1, pm=1.0E-6, center_freq=2.4E9, p_winner=1.0;
 
     char c;
-    while((c=getopt(argc, argv, "hs:m:G:c:i:o:d:")) != -1)
+    while((c=getopt(argc, argv, "hn:s:m:G:c:i:o:d:w:")) != -1)
     {
         switch(c)
         {
             case 'h':
-                printf ("usage:\n GA -s sPressure -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file\n default: s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, device_struct: O, source: source, target: target\n");
+                printf ("usage:\n GA -n nInitial -s sPressure -w p_win -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file\n default: s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, p_win=1.0 device_struct: O, source: source, target: target\n");
                 return 0;
+            case 'n':
+                nInitial = atoi(optarg);
+                break;
             case 's':
                 selectionPressure = atoi (optarg);  // selection pressure
                 break;
@@ -57,6 +60,10 @@ int main (int argc, char *argv[])
                 break;
             case 'o':
                 target_file = optarg;
+                break;
+            case 'w':
+                p_winner = atof(optarg);
+                break;
             default:
                 puts("wrong command");
                 return 0;
@@ -64,13 +71,12 @@ int main (int argc, char *argv[])
     };
 
     ell = device_list.length() * GENE_LENGTH;
-    nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
-    cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct" <<device_list<< endl;
+    if(nInitial==0) nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
+    cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct:" <<device_list<< endl;
 
     Statistics stGenS, stGenF;
-    int failNum = 0;
 
-	GA ga ( ell, nInitial, selectionPressure, pc, pm, maxGen, maxFe, source_file, target_file, device_list, center_freq);
+	GA ga ( ell, nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, device_list, center_freq);
 	ga.doIt (false);
 	fflush (NULL);
 
