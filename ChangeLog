@@ -1,3 +1,8 @@
+Matching project 0.1.4 (十一月 19, 2012)
+    * Feature add: getopt
+    * Feature add: p_winner in tournament selection
+    * Bug Fix: fitness calculous
+
 Matching project 0.1.3 (十一月 12, 2012):
 	* Feature add: default read source and target file
 	* Feature add: user can specify one element to optimize

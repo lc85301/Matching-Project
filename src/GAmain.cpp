@@ -74,8 +74,16 @@ int main (int argc, char *argv[])
     if(nInitial==0) nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
     cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct:" <<device_list<< endl;
 
-    Statistics stGenS, stGenF;
+    for (int i=0;i<device_list.length();++i)
+        if(device_list[i]!='S'||device_list[i]!='s'||
+           device_list[i]!='T'||device_list[i]!='t'||
+           device_list[i]!='O'||device_list[i]!='o'||
+           device_list[i]!='C'||device_list[i]!='c'){
+            printf("wrong device!\n");
+            return 0;
+        }
 
+    Statistics stGenS, stGenF;
 	GA ga ( ell, nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, device_list, center_freq);
 	ga.doIt (false);
 	fflush (NULL);
