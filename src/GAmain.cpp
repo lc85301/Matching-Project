@@ -36,7 +36,7 @@ int main (int argc, char *argv[])
         switch(c)
         {
             case 'h':
-                printf ("usage:\n GA -s sPressure -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file\n default: s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, device_struct:\"O\", source=\"source\", target=\"target\"\n");
+                printf ("usage:\n GA -s sPressure -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file\n default: s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, device_struct: O, source: source, target: target\n");
                 return 0;
             case 's':
                 selectionPressure = atoi (optarg);  // selection pressure

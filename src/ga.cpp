@@ -389,12 +389,12 @@ bool GA::shouldTerminate ()
     }
 
     // Found a satisfactory solution
-    //if (stFitness.getMax() >= population[0].getMaxFitness())
+    //if (population[0].getMaxFitness() <= stFitness.getMean();)
     //    termination = true;
 
     // The population loses diversity
-    //if (stFitness.getMax()-1e-6 < stFitness.getMean())
-	//termination = true;
+    if (stFitness.getMax()-1e-6 < stFitness.getMean())
+	termination = true;
 
     return termination;
 
