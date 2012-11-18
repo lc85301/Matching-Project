@@ -114,7 +114,7 @@ double Chromosome::matching() const{
 	int list_index = 0;
 	complex<double> point;
 	double freqratio;
-	int line_length;
+	double line_length;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
 	//source_list and target_list has to be same size
@@ -125,14 +125,14 @@ double Chromosome::matching() const{
 		 ++s_it, ++t_it
 		 ) {
 		list_index = 0;
+		point = s_it->S11();
 		while (Chromosome::device_list[list_index] !='\0' ) {
-			point = s_it->S11();
 			freqratio = s_it->freq() / Chromosome::center_freq;
 			line_length = get_line_length(list_index) * freqratio;
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
-				  point = ShortStub(point,line_length );
+				  point = ShortStub(point,line_length);
 				  break;
 			  case 't':
 			  case 'T':
@@ -149,6 +149,7 @@ double Chromosome::matching() const{
 		line_fitness += temp * temp;
 	}
 	//normalize to point size
+	//cout << line_fitness << endl;
 	return line_fitness;
 }
 
