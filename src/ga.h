@@ -69,6 +69,7 @@ class GA
         double p_winner;
         Chromosome *population;
         Chromosome *offspring;
+        Chromosome *best_guy;
         int *selectionIndex;
         int maxGen;
         int maxFe;
@@ -76,6 +77,8 @@ class GA
         int fe;
         int generation;
         int bestIndex;
+
+        bool first_time;
 
 };
 #endif

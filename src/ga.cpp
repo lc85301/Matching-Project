@@ -66,6 +66,7 @@ double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string
 
     population = new Chromosome[nInitial];
     offspring = new Chromosome[nInitial];
+    best_guy = new Chromosome;
     selectionIndex = new int[nInitial];
 
     Chromosome::center_freq = centerfreq;
@@ -77,6 +78,7 @@ double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string
         population[i].init (ell);
         offspring[i].init (ell);
     }
+    best_guy->init(ell);
 
     initializePopulation ();
 }
@@ -370,6 +372,18 @@ void GA::oneRun (bool output)
     }
     population[bestIndex].output();
 
+    if( first_time == true){
+        cout <<"best"<<endl;
+        for( i = 0; i < ell; ++i)
+            best_guy->setVal( i, population[bestIndex].getVal(i));
+        first_time =false;
+    }
+    else{
+        if( best_guy->getFitness() > population[bestIndex].getFitness() ){
+            for( i = 0; i < ell; i++)
+                best_guy->setVal( i, population[bestIndex].getVal(i));
+        }
+    }
     //if (output)
         showStatistics ();
 
@@ -381,9 +395,13 @@ int GA::doIt (bool output)
 {
     generation = 0;
 
+    first_time = true;
     while (!shouldTerminate ()) {
         oneRun (output);
     }
+    cout<< "best guy ---" <<endl;
+    best_guy->output();
+    cout << "fitness is "<<best_guy->getFitness() <<endl;
     return generation;
 }
 

@@ -74,11 +74,11 @@ int main (int argc, char *argv[])
     if(nInitial==0) nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
     cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct:" <<device_list<< endl;
 
-    for (int i=0;i<device_list.length();++i)
-        if(device_list[i]!='S'||device_list[i]!='s'||
-           device_list[i]!='T'||device_list[i]!='t'||
-           device_list[i]!='O'||device_list[i]!='o'||
-           device_list[i]!='C'||device_list[i]!='c'){
+    for (unsigned i=0;i<device_list.length();++i)
+        if(device_list[i]!='S' && device_list[i]!='s' &&
+           device_list[i]!='T' && device_list[i]!='t' &&
+           device_list[i]!='O' && device_list[i]!='o' &&
+           device_list[i]!='C' && device_list[i]!='c'){
             printf("wrong device!\n");
             return 0;
         }
