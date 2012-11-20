@@ -18,8 +18,6 @@
 #include "chromosome.h"
 #include "global.h"
 
-#define GENE_LENGTH 7
-
 using namespace std;
 
 double getnumber(string out_string, double default_value);
@@ -70,7 +68,7 @@ int main (int argc, char *argv[])
         }
     };
 
-    ell = device_list.length() * GENE_LENGTH;
+    ell = device_list.length();
     if(nInitial==0) nInitial = (int)ceil((double)ell*log((double)ell)+0.5);
     cout << "ell: " <<ell<< " nInitial:" <<nInitial<< " struct:" <<device_list<< endl;
 

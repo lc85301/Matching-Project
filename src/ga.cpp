@@ -86,14 +86,10 @@ double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string
 void GA::initializePopulation ()
 {
     int i, j;
-    double p = 0.5;
 
     for (i = 0; i < nInitial; i++)
         for (j = 0; j < ell; j++)
-            if (myRand.uniform () > p)
-                population[i].setVal (j, 1);
-            else
-                population[i].setVal (j, 0);
+                population[i].setVal (j, myRand.uniformInt( 1, 100));
 
 }
 
@@ -244,12 +240,33 @@ void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & 
 {
     if (myRand.uniform () < pc) {
 	//onePointXO (p1, p2, c1, c2);
-    uniformXO (p1, p2, c1, c2, 0.5);
+    //uniformXO (p1, p2, c1, c2, 0.5);
+    extenedLineXO(p1, p2, c1, c2, 0.25);
     }
     else {
         c1 = p1;
         c2 = p2;
     }
+}
+
+void GA::extenedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2, double alpha_w)
+{
+    int i;
+    double alpha;
+    for (i = 0; i < ell; i++) {
+        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
+        c1.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
+        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
+        c2.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
+    }
+    /*
+    cout << "parent" << endl;
+    p1.printf();cout<<endl;
+    p2.printf();cout<<endl;
+    cout << "offspring" <<endl;
+    c1.printf();cout<<endl;
+    c2.printf();cout<<endl;
+    */
 }
 
 void GA::onePointXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2)
@@ -298,14 +315,13 @@ void GA::simpleMutation ()
     for (i = 0; i < nNextGeneration; i++)
         for (j = 0; j< ell; j++)
             if (myRand.flip(pm)) {
-                int val = offspring[i].getVal(j);
-                offspring[i].setVal(j, 1-val);
+                offspring[i].setVal(j, myRand.uniformInt( 1, 100));
             }
 }
 
 void GA::mutationClock ()
 {
-    if (pm <= 1e-6) return; // can't deal with too small pm
+    if (pm < 1e-6) return; // can't deal with too small pm
 
     int pointer = (int) (log(1-myRand.uniform()) / log(1-pm) + 1);
 
@@ -314,8 +330,7 @@ void GA::mutationClock ()
 	int q = pointer / ell;
 	int r = pointer % ell;
 
-        int val = offspring[q].getVal(r);
-        offspring[q].setVal(r, 1-val);
+        offspring[q].setVal(r, myRand.uniformInt( 1, 100));
 
 	// Compute next mutation clock
 	pointer += (int) (log(1-myRand.uniform()) / log(1-pm) + 1);

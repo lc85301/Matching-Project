@@ -179,7 +179,7 @@ void Chromosome::printf () const
 {
     int i;
     for (i = 0; i < length; i++)
-        ::printf ("%d", gene[i]);
+        ::printf ("%d,", gene[i]);
 }
 
 
