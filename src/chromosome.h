@@ -32,7 +32,6 @@ class Chromosome
         double oneMax () const;
 
 		// add by yodalee and GodGodmouse
-		int get_line_length (int ) const;
 		double matching () const;
 		void output() const;
 		// end add
@@ -50,7 +49,7 @@ class Chromosome
 		static string device_list;
 		static double center_freq;
     protected:
-        bool *gene;
+        int *gene;
         int length;
         double fitness;
         bool evaluated;

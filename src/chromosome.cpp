@@ -44,7 +44,7 @@ void Chromosome::init (int n_length)
     if (gene != NULL)
         delete[]gene;
 
-    gene = new bool[length];
+    gene = new int[length];
     evaluated = false;
 }
 
@@ -53,7 +53,7 @@ int Chromosome::getVal (int index) const
     if (index < 0 || index > length)
         outputErrMsg ("Index overrange in Chromosome::operator[]");
 
-    return (gene[index])? 1:0;
+    return gene[index];
 }
 
 
@@ -62,7 +62,7 @@ void Chromosome::setVal (int index, int val)
     if (index < 0 || index > length)
         outputErrMsg ("Index overrange in Chromosome::operator[]");
 
-    gene[index] = (val==1)? true:false;
+    gene[index] = val;
     evaluated = false;
 }
 
@@ -89,26 +89,6 @@ double Chromosome::evaluate ()
 	return matching ();
 }
 
-//********************************************
-// Function: get_line_length
-// Description: get the length of specific part
-//	ex: chromosome 10101101....1111111
-//	get_line_length(0), return 127
-//********************************************
-//!! 7 is a const //
-int Chromosome::get_line_length(int part_num) const{
-	int start_point = part_num * 7;
-	int ratio = 1;
-	int line_length = 0;
-	for (int i = start_point; i < start_point+7; ++i) {
-		if (gene[i]) {
-			line_length += ratio;
-		}
-		ratio *= 2;
-	}
-	return line_length;
-}
-
 double Chromosome::matching() const{
 	double line_fitness = 0;
 	int list_index = 0;
@@ -128,7 +108,7 @@ double Chromosome::matching() const{
 		point = s_it->S11();
 		while (Chromosome::device_list[list_index] !='\0' ) {
 			freqratio = s_it->freq() / Chromosome::center_freq;
-			line_length = get_line_length(list_index) * freqratio;
+			line_length = getVal(list_index) * freqratio;
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
@@ -155,10 +135,9 @@ double Chromosome::matching() const{
 
 void Chromosome:: output() const
 {
-	//!! 7 is a const !!
 	cout << "chromosome result\n";
-	for (int i = 0; i < length/7; ++i) {
-		cout << "electric length of " << i << "th line is: " << get_line_length(i)<< endl;
+	for (int i = 0; i < length; ++i) {
+		cout << "electric length of " << i << "th line is: " << getVal(i)<< endl;
 	}
 }
 
