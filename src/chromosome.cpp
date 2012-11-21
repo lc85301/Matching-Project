@@ -159,7 +159,6 @@ void Chromosome:: output() const
 	}
 }
 
-
 // OneMax
 double Chromosome::oneMax () const
 {

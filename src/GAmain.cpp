@@ -27,14 +27,15 @@ int main (int argc, char *argv[])
     int ell, nInitial=0, selectionPressure=2, maxGen=200, maxFe=-1;
     string source_file="source", target_file="target", device_list="O";
     double pc=1, pm=1.0E-6, center_freq=2.4E9, p_winner=1.0;
+    bool RTR_on = false;
 
     char c;
-    while((c=getopt(argc, argv, "hn:s:m:G:c:i:o:d:w:")) != -1)
+    while((c=getopt(argc, argv, "hn:s:m:G:c:i:o:d:w:r")) != -1)
     {
         switch(c)
         {
             case 'h':
-                printf ("usage:\n GA -n nInitial -s sPressure -w p_win -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file\n default: s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, p_win=1.0 device_struct: O, source: source, target: target\n");
+                printf ("usage:\n GA -n nInitial -s sPressure -w p_win -m pm -G maxGen -c center_freq -d device_structure -i source_file -o target_file -r\ndefault:\n s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, p_win=1.0\n device_struct: O, source: source, target: target\n -r option is for RTR\n");
                 return 0;
             case 'n':
                 nInitial = atoi(optarg);
@@ -62,6 +63,9 @@ int main (int argc, char *argv[])
             case 'w':
                 p_winner = atof(optarg);
                 break;
+            case 'r':
+                RTR_on = true;
+                break;
             default:
                 puts("wrong command");
                 return 0;
@@ -82,7 +86,7 @@ int main (int argc, char *argv[])
         }
 
     Statistics stGenS, stGenF;
-	GA ga ( ell, nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, device_list, center_freq);
+	GA ga ( ell, nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, device_list, center_freq, RTR_on);
 	ga.doIt (false);
 	fflush (NULL);
 

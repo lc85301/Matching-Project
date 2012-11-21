@@ -31,8 +31,8 @@ class Chromosome
 
         double oneMax () const;
 
-		// add by yodalee and GodGodmouse
-		double matching () const;
+		// add by yodalee and georgemouse
+        double matching () const;
 		void output() const;
 		// end add
 

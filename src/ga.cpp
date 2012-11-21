@@ -7,12 +7,14 @@
 #include <string>
 #include <stdlib.h>
 #include <float.h>
-#include <math.h>
+#include <cmath>
+#include <limits.h>
 #include "global.h"
 #include "statistics.h"
 #include "myrand.h"
 #include "ga.h"
 #include "S2P_reader.h"
+#define RTR_THRESHOLD 30
 using namespace std;
 
 GA::GA ()
@@ -33,9 +35,9 @@ GA::GA ()
 }
 
 
-GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq)
+GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on)
 {
-    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq);
+    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq, _RTR_on);
 }
 
 
@@ -50,7 +52,7 @@ GA::~GA ()
 
 void
 GA::init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq)
+double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on)
 {
     int i;
 
@@ -63,6 +65,7 @@ double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string
     p_winner = p_win;
     maxGen = n_maxGen;
     maxFe = n_maxFe;
+    RTR_on = _RTR_on;
 
     population = new Chromosome[nInitial];
     offspring = new Chromosome[nInitial];
@@ -354,19 +357,47 @@ void GA::replacePopulation ()
 {
     int i;
 
-    if (nNextGeneration != nCurrent) {
-        delete[]population;
-        population = new Chromosome[nNextGeneration];
+    if(!RTR_on) { //RTR off
+        if (nNextGeneration != nCurrent) {
+            delete[]population;
+            population = new Chromosome[nNextGeneration];
+        }
+
+        for (i = 0; i < nNextGeneration; i++)
+            population[i] = offspring[i];
+
+        nCurrent = nNextGeneration;
     }
+    else { //RTR on
+        int j, min, index, temp;
 
-    for (i = 0; i < nNextGeneration; i++)
-        population[i] = offspring[i];
+        for( i = 0; i < nNextGeneration; i++) {
+            min = INT_MAX;
+            for( j = 0; j < nCurrent; j++) {
+                temp = gene_distance( offspring[i], population[j]);
+                if( temp < min) {
+                    index = j;
+                    min = temp;
+                }
+            }
+            if( population[index].getFitness() > offspring[i].getFitness())
+                population[index] = offspring[i];
+        }
+    }
+}
 
-    nCurrent = nNextGeneration;
+int GA::gene_distance (const Chromosome & c1, const Chromosome & c2) const
+{
+    int dist = 0, temp;
+    for (int i = 0; i < ell; i++) {
+        temp = abs(c1.getVal(i)- c2.getVal(i));
+        dist += temp*temp;
+    }
+    return dist;
 }
 
 
-void GA::oneRun (bool output)
+void GA::oneRun ()
 {
     int i;
 
@@ -388,7 +419,6 @@ void GA::oneRun (bool output)
     population[bestIndex].output();
 
     if( first_time == true){
-        cout <<"best"<<endl;
         for( i = 0; i < ell; ++i)
             best_guy->setVal( i, population[bestIndex].getVal(i));
         first_time =false;
@@ -397,10 +427,12 @@ void GA::oneRun (bool output)
         if( best_guy->getFitness() > population[bestIndex].getFitness() ){
             for( i = 0; i < ell; i++)
                 best_guy->setVal( i, population[bestIndex].getVal(i));
+            best_counter = 0;
         }
+        best_counter++;
     }
-    //if (output)
-        showStatistics ();
+
+    showStatistics ();
 
     generation++;
 }
@@ -409,14 +441,20 @@ void GA::oneRun (bool output)
 int GA::doIt (bool output)
 {
     generation = 0;
+    best_counter = 0;
 
     first_time = true;
     while (!shouldTerminate ()) {
-        oneRun (output);
+        oneRun ();
     }
-    cout<< "best guy ---" <<endl;
-    best_guy->printf();
-    cout << "\nfitness is "<<best_guy->getFitness() <<endl;
+
+    // record best chromosome
+    if(!RTR_on){
+        cout<< "best guy --- for "<< best_counter <<" generation(s)" <<endl;
+        best_guy->printf();
+        cout << "\nfitness is "<<best_guy->getFitness() <<endl;
+    }
+
     return generation;
 }
 
@@ -426,10 +464,10 @@ bool GA::shouldTerminate ()
     bool termination = false;
 
     // Reach maximal # of function evaluations
-    //if (maxFe != -1) {
-    //    if (fe > maxFe)
-    //        termination = true;
-    //}
+    if (maxFe != -1) {
+        if (fe > maxFe)
+            termination = true;
+    }
 
     // Reach maximal # of generations
     if (maxGen != -1) {
@@ -443,7 +481,10 @@ bool GA::shouldTerminate ()
 
     // The population loses diversity
     if (stFitness.getMax()-1e-6 < stFitness.getMean())
-	termination = true;
+        termination = true;
+
+    if ( RTR_on && best_counter > RTR_THRESHOLD)
+        termination = true;
 
     return termination;
 
