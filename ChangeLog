@@ -1,18 +1,22 @@
-Matching project 0.1.4 (十一月 19, 2012)
+Matching project 0.1.4 (11, 22, 2012)
+    * Feature add: change binary GA to real GA
+    * Feature add: add RTR alg
+
+Matching project 0.1.4 (11, 19, 2012)
     * Feature add: getopt
     * Feature add: p_winner in tournament selection
 	* Feature add: line_operator remove parameter frequency ratio
     * Bug Fix: fitness calculous
 
-Matching project 0.1.3 (十一月 12, 2012):
+Matching project 0.1.3 (11, 12, 2012):
 	* Feature add: default read source and target file
 	* Feature add: user can specify one element to optimize
 
-Matching project 0.1.2 (十一月 10, 2012):
+Matching project 0.1.2 (11, 10, 2012):
 	* Feature add: add line operator for microwave element
 
-Matching project 0.1.1 (十一月 04, 2012):
+Matching project 0.1.1 (11, 04, 2012):
     * Feature add: add S2P reader and the demo cpp
 
-Matching project 0.1.0 (十一月 04, 2012):
+Matching project 0.1.0 (11, 04, 2012):
 	* Feature add: project start
