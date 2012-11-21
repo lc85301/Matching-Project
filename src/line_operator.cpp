@@ -17,7 +17,7 @@
 //********************************************
 
 #include <complex>
-#include <math.h>
+#include <cmath>
 using namespace std;
 
 complex<double> Tline(complex<double> &in, double length);

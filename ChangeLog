@@ -1,6 +1,7 @@
 Matching project 0.1.4 (十一月 19, 2012)
     * Feature add: getopt
     * Feature add: p_winner in tournament selection
+	* Feature add: line_operator remove parameter frequency ratio
     * Bug Fix: fitness calculous
 
 Matching project 0.1.3 (十一月 12, 2012):

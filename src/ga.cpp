@@ -415,8 +415,8 @@ int GA::doIt (bool output)
         oneRun (output);
     }
     cout<< "best guy ---" <<endl;
-    best_guy->output();
-    cout << "fitness is "<<best_guy->getFitness() <<endl;
+    best_guy->printf();
+    cout << "\nfitness is "<<best_guy->getFitness() <<endl;
     return generation;
 }
 
