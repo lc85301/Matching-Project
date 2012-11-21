@@ -16,6 +16,9 @@ S2P_reader Chromosome::source_list;
 S2P_reader Chromosome::target_list;
 string Chromosome::device_list;
 double Chromosome::center_freq;
+//double Chromosome::up_freq;
+//double Chromosome::down_freq;
+//double Chromosome::RL_req;
 
 Chromosome::Chromosome ()
 {
@@ -114,7 +117,7 @@ double Chromosome::matching() const{
 	int list_index = 0;
 	complex<double> point;
 	double freqratio;
-	double line_length;
+	int line_length;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
 	//source_list and target_list has to be same size
@@ -126,30 +129,45 @@ double Chromosome::matching() const{
 		 ) {
 		list_index = 0;
 		point = s_it->S11();
+		freqratio = s_it->freq() / Chromosome::center_freq;
 		while (Chromosome::device_list[list_index] !='\0' ) {
-			freqratio = s_it->freq() / Chromosome::center_freq;
-			line_length = get_line_length(list_index) * freqratio;
+			line_length = get_line_length(list_index);
+			if (line_length > 90 or line_length < 20) { 
+				line_fitness += 10000;
+			}
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
-				  point = ShortStub(point,line_length);
+				  point = ShortStub(point,freqratio*line_length);
 				  break;
 			  case 't':
 			  case 'T':
-				  point = Tline(point, line_length);
+				  point = Tline(point, freqratio*line_length);
 				  break;
 			  case 'o':
 			  case 'O':
-				  point = OpenStub(point, line_length);
+				  if (line_length > 75) { line_fitness += 10000; }
+				  point = OpenStub(point, freqratio*line_length);
 				  break;
 			}
 			++list_index;
 		}
 		double temp = abs(point - t_it->S11());
 		line_fitness += temp * temp;
+		//********************************************
+		// Code: RL
+		// Description: change point on smith chart to
+		// RL, and compare with user defined requirement
+		//********************************************
+		//if (Chromosome::down_freq < s_it->freq()
+		//	   && Chromosome::up_freq > s_it->freq()
+		//) {
+		//	double RL = log10(line_fitness);
+		//	if (RL > Chromosome::RL_req) {
+		//		line_fitness += 10000;
+		//	}
+		//}
 	}
-	//normalize to point size
-	//cout << line_fitness << endl;
 	return line_fitness;
 }
 

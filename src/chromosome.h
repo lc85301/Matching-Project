@@ -49,6 +49,9 @@ class Chromosome
 		static S2P_reader target_list;
 		static string device_list;
 		static double center_freq;
+		//static double up_freq;
+		//static double down_freq;
+		//static souble RL_req;
     protected:
         bool *gene;
         int length;
