@@ -10,7 +10,7 @@
 #include <cassert>
 #include "global.h"
 #include "chromosome.h"
-#include "line_operator.cpp"
+#include "line_operator.h"
 
 S2P_reader Chromosome::source_list;
 S2P_reader Chromosome::target_list;
