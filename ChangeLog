@@ -1,3 +1,6 @@
+Matching project 0.1.5 (十一月 23, 2012):
+	* Adjust: make line_operator as a class
+
 Matching project 0.1.4 (十一月 19, 2012)
     * Feature add: getopt
     * Feature add: p_winner in tournament selection
