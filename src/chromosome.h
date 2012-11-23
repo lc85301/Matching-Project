@@ -31,9 +31,8 @@ class Chromosome
 
         double oneMax () const;
 
-		// add by yodalee and GodGodmouse
-		int get_line_length (int ) const;
-		double matching () const;
+		// add by yodalee and georgemouse
+        double matching () const;
 		void output() const;
 		// end add
 
@@ -53,7 +52,7 @@ class Chromosome
 		//static double down_freq;
 		//static souble RL_req;
     protected:
-        bool *gene;
+        int *gene;
         int length;
         double fitness;
         bool evaluated;

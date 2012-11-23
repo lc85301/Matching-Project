@@ -18,12 +18,12 @@ class GA
     public:
         GA ();
         GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on);
 
         ~GA ();
 
         void init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on);
 
         void initializePopulation ();
         void evaluate ();
@@ -33,22 +33,26 @@ class GA
         /** tournament selection without replacement */
         void tournamentSelection ();
 
-	/** Roulette wheel selection */
-	void rwSelection ();
+    /** Roulette wheel selection */
+        void rwSelection ();
 
         void crossover ();
         void pairwiseXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &);
-	void onePointXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &);
+        void onePointXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &);
         void uniformXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &, double);
+
+        void extenedLineXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &, double);
 
         void mutation ();
         void simpleMutation ();
-	void mutationClock ();
+        void mutationClock ();
 
         void replacePopulation ();
 
+        int gene_distance (const Chromosome & c1, const Chromosome & c2) const;
+
         void showStatistics ();
-        void oneRun (bool output = true);
+        void oneRun ();
         int doIt (bool output = true);
 
         bool shouldTerminate ();
@@ -78,7 +82,10 @@ class GA
         int generation;
         int bestIndex;
 
+        int best_counter;
+
         bool first_time;
+        bool RTR_on;
 
 };
 #endif
