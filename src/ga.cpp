@@ -244,7 +244,7 @@ void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & 
     if (myRand.uniform () < pc) {
 	//onePointXO (p1, p2, c1, c2);
     //uniformXO (p1, p2, c1, c2, 0.5);
-    extenedLineXO(p1, p2, c1, c2, 0.25);
+    extendedLineXO(p1, p2, c1, c2, 0.25);
     }
     else {
         c1 = p1;
@@ -252,7 +252,7 @@ void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & 
     }
 }
 
-void GA::extenedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2, double alpha_w)
+void GA::extendedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2, double alpha_w)
 {
     int i;
     double alpha;
