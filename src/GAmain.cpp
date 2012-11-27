@@ -24,6 +24,9 @@ double getnumber(string out_string, double default_value);
 
 int main (int argc, char *argv[])
 {
+    // structure layer GA parameter
+    int s_population, s_selectionPressure=2, s_maxGen=200, maxFe=-1;
+    // fitness layer GA parameter
     int ell, nInitial=0, selectionPressure=2, maxGen=200, maxFe=-1;
     string source_file="source", target_file="target", device_list="O";
     double pc=1, pm=1.0E-6, center_freq=2.4E9, p_winner=1.0;
@@ -87,7 +90,7 @@ int main (int argc, char *argv[])
 
     Statistics stGenS, stGenF;
 	GA ga ( ell, nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, device_list, center_freq, RTR_on);
-	ga.doIt (false);
+	ga.doIt ();
 	fflush (NULL);
 
     return EXIT_SUCCESS;

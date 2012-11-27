@@ -41,7 +41,7 @@ class GA
         void onePointXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &);
         void uniformXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &, double);
 
-        void extenedLineXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &, double);
+        void extendedLineXO (const Chromosome &, const Chromosome &, Chromosome &, Chromosome &, double);
 
         void mutation ();
         void simpleMutation ();
@@ -53,7 +53,7 @@ class GA
 
         void showStatistics ();
         void oneRun ();
-        int doIt (bool output = true);
+        int doIt ();
 
         bool shouldTerminate ();
         int getNextPopulation ();
