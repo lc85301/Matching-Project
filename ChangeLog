@@ -1,15 +1,11 @@
-<<<<<<< HEAD
-Matching project 0.1.5 (11, 23, 2012):
+Matching project 0.1.6 (11, 23, 2012):
 	* Adjust: make line_operator as a class
 
-Matching project 0.1.4 (11, 19, 2012)
-=======
-Matching project 0.1.4 (11, 22, 2012)
+Matching project 0.1.5 (11, 22, 2012)
     * Feature add: change binary GA to real GA
     * Feature add: add RTR alg
 
 Matching project 0.1.4 (11, 19, 2012)
->>>>>>> real
     * Feature add: getopt
     * Feature add: p_winner in tournament selection
 	* Feature add: line_operator remove parameter frequency ratio
