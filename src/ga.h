@@ -18,12 +18,12 @@ class GA
     public:
         GA ();
         GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on, int RTR_th);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string devicelist, bool _RTR_on, int RTR_th);
 
         ~GA ();
 
         void init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on, int RTR_th);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string devicelist, bool _RTR_on, int RTR_th);
 
         void initializePopulation ();
         void evaluate ();
@@ -73,7 +73,7 @@ class GA
         double p_winner;
         Chromosome *population;
         Chromosome *offspring;
-        Chromosome *best_guy;
+        Chromosome best_guy;
         int *selectionIndex;
         int maxGen;
         int maxFe;

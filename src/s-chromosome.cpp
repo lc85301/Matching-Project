@@ -76,8 +76,8 @@ double S_Chromosome::evaluate ()
 double S_Chromosome::subGA()
 {
     double _fitness;
-    cout << gene <<" "<< gene.length() <<endl;
-    GA ga ( gene.length(), nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, gene, centerfreq, RTR_on, RTR_th);
+    cout << gene <<endl;
+    GA ga ( gene.length(), nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, gene, RTR_on, RTR_th);
     _fitness = ga.doIt (param);
     return _fitness;
 }

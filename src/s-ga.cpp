@@ -75,6 +75,9 @@ S_GA::init (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s
     S_Chromosome::centerfreq = _centerfreq;
     S_Chromosome::RTR_on = _RTR_on;
     S_Chromosome::RTR_th = _RTR_th;
+    Chromosome::center_freq = _centerfreq;
+    Chromosome::source_list.init(_source_file);
+    Chromosome::target_list.init(_target_file);
 
     population = new S_Chromosome[nInitial];
     offspring = new S_Chromosome[nInitial];
@@ -273,11 +276,11 @@ void S_GA::onePointXO (const S_Chromosome & p1, const S_Chromosome & p2, S_Chrom
         o1 = s1.substr(0, crossSite1) + s2.substr(crossSite2);
         o2 = s2.substr(0, crossSite2) + s1.substr(crossSite1);
     }
-
+    /*
     cout << "before: " << s1 << "," << s2 << endl;
     cout << "cross: " << crossSite1 << "," << crossSite2 << endl;
     cout << "after: " << o1 << "," << o2 << endl;
-
+    */
     c1.setVal (o1);
     c2.setVal (o2);
 }
