@@ -14,7 +14,6 @@
 #include "myrand.h"
 #include "ga.h"
 #include "S2P_reader.h"
-#define RTR_THRESHOLD 30
 using namespace std;
 
 GA::GA ()
@@ -35,9 +34,9 @@ GA::GA ()
 }
 
 
-GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on)
+GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on, int RTR_th)
 {
-    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq, _RTR_on);
+    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq, _RTR_on,  RTR_th);
 }
 
 
@@ -52,7 +51,7 @@ GA::~GA ()
 
 void
 GA::init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on)
+double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on, int RTR_th)
 {
     int i;
 
@@ -66,6 +65,7 @@ double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string
     maxGen = n_maxGen;
     maxFe = n_maxFe;
     RTR_on = _RTR_on;
+    RTR_threshold = RTR_th;
 
     population = new Chromosome[nInitial];
     offspring = new Chromosome[nInitial];
@@ -347,9 +347,8 @@ void GA::showStatistics ()
     printf ("Gen:%d  Fitness:(Max/Mean/Min):%f/%f/%f Chromsome Length:%d\n",
         generation, stFitness.getMax (), stFitness.getMean (),
         stFitness.getMin (), population[0].getLength ());
-    printf ("best chromosome:");
+    printf ("best chromosome: ");
     population[bestIndex].printf ();
-    printf ("\n");
 }
 
 
@@ -416,7 +415,8 @@ void GA::oneRun ()
         }
         stFitness.record (fitness);
     }
-    population[bestIndex].output();
+    //population[bestIndex].printf();
+    //cout<<endl;
 
     if( first_time == true){
         for( i = 0; i < ell; ++i)
@@ -432,13 +432,13 @@ void GA::oneRun ()
         best_counter++;
     }
 
-    showStatistics ();
+    //showStatistics ();
 
     generation++;
 }
 
 
-int GA::doIt ()
+double GA::doIt (int *param)
 {
     generation = 0;
     best_counter = 0;
@@ -449,13 +449,17 @@ int GA::doIt ()
     }
 
     // record best chromosome
-    if(!RTR_on){
+    //if(!RTR_on){
         cout<< "best guy --- for "<< best_counter <<" generation(s)" <<endl;
         best_guy->printf();
-        cout << "\nfitness is "<<best_guy->getFitness() <<endl;
+        cout << "fitness is "<<best_guy->getFitness() <<endl;
+    //}
+
+    for( int i=0; i < ell; i++){
+        param[i] = best_guy->getVal(i);
     }
 
-    return generation;
+    return best_guy->getFitness();
 }
 
 
@@ -483,7 +487,7 @@ bool GA::shouldTerminate ()
     if (stFitness.getMax()-1e-6 < stFitness.getMean())
         termination = true;
 
-    if ( RTR_on && best_counter > RTR_THRESHOLD)
+    if ( RTR_on && best_counter > RTR_threshold)
         termination = true;
 
     return termination;

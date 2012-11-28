@@ -12,14 +12,12 @@
 #include "global.h"
 #include "statistics.h"
 #include "myrand.h"
-#include "ga.h"
-#include "S2P_reader.h"
-#define RTR_THRESHOLD 30
+#include "s-ga.h"
 using namespace std;
 
-GA::GA ()
+S_GA::S_GA ()
 {
-    ell = 0;
+    max_stage = 0;
     nInitial = 0;
     nCurrent = 0;
     fe = 0;
@@ -35,15 +33,14 @@ GA::GA ()
 }
 
 
-GA::GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc, double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on)
+S_GA::S_GA (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th)
 {
-    init (n_ell, n_nInitial, n_selectionPressure, n_pc, n_pm, p_win, n_maxGen, n_maxFe, source_file, target_file, devicelist, centerfreq, _RTR_on);
+    init (_max_stage, _s_nInitial, _s_selectionPressure, _s_pc, _s_pm, _s_p_winner, _s_maxGen, _s_maxFe,  _best_th, _nInitial, _selectionPressure, _pc, _pm, _p_winner, _maxGen, _maxFe, _source_file, _target_file, _centerfreq, _RTR_on, _RTR_th);
 }
 
 
-GA::~GA ()
+S_GA::~S_GA ()
 {
-
     delete[]population;
     delete[]offspring;
     delete[]selectionIndex;
@@ -51,107 +48,102 @@ GA::~GA ()
 
 
 void
-GA::init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-double n_pm, double p_win, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on)
+S_GA::init (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th)
 {
-    int i;
+    max_stage = _max_stage;
 
-    ell = n_ell;
-    nInitial = n_nInitial;
+    nInitial = _s_nInitial;
     nCurrent = nInitial;
-    selectionPressure = n_selectionPressure;
-    pc = n_pc;
-    pm = n_pm;
-    p_winner = p_win;
-    maxGen = n_maxGen;
-    maxFe = n_maxFe;
-    RTR_on = _RTR_on;
+    selectionPressure = _s_selectionPressure;
+    pc = _s_pc;
+    pm = _s_pm;
+    p_winner = _s_p_winner;
+    maxGen = _s_maxGen;
+    maxFe = _s_maxFe;
+    best_th = _best_th;
 
-    population = new Chromosome[nInitial];
-    offspring = new Chromosome[nInitial];
-    best_guy = new Chromosome;
+    //for sublayer GA
+    S_Chromosome::nInitial = _nInitial;
+    S_Chromosome::selectionPressure = _selectionPressure;
+    S_Chromosome::pc = _pc;
+    S_Chromosome::pm = _pm;
+    S_Chromosome::p_winner = _p_winner;
+    S_Chromosome::maxGen = _maxGen;
+    S_Chromosome::maxFe = _maxFe;
+    S_Chromosome::source_file = _source_file;
+    S_Chromosome::target_file = _target_file;
+    S_Chromosome::centerfreq = _centerfreq;
+    S_Chromosome::RTR_on = _RTR_on;
+    S_Chromosome::RTR_th = _RTR_th;
+
+    population = new S_Chromosome[nInitial];
+    offspring = new S_Chromosome[nInitial];
     selectionIndex = new int[nInitial];
+    isSelected = new bool[nInitial];
 
-    Chromosome::center_freq = centerfreq;
-    Chromosome::device_list = devicelist;
-    Chromosome::source_list.init(source_file);
-    Chromosome::target_list.init(target_file);
-
-    for (i = 0; i < nInitial; i++) {
-        population[i].init (ell);
-        offspring[i].init (ell);
+    /*
+    for (int i = 0; i < nInitial; i++) {
+        population[i].init ();
+        offspring[i].init ();
     }
-    best_guy->init(ell);
+    best_guy->init();
+    */
 
     initializePopulation ();
 }
 
-void GA::initializePopulation ()
+void S_GA::initializePopulation ()
 {
-    int i, j;
+    int i, j, X;
+    char *temp;
+    temp= new char[max_stage+1];
+    temp[max_stage]='\0';
 
-    for (i = 0; i < nInitial; i++)
-        for (j = 0; j < ell; j++)
-                population[i].setVal (j, myRand.uniformInt( 1, 100));
+    for (i = 0; i < nInitial; i++){
+        for (j = 0; j < max_stage; j++)
+        {
+            if(!j)  X = myRand.uniformInt( 1, 3);
+            else    X = myRand.uniformInt( 0, 3);
 
+            switch(X)
+            {
+                case 0:
+                    temp[j]='\0';
+                    break;
+                case 1:
+                    temp[j]='S';
+                    break;
+                case 2:
+                    temp[j]='T';
+                    break;
+                case 3:
+                    temp[j]='O';
+                    break;
+                case 4:
+                    temp[j]='C';
+                    break;
+            }
+
+            if(!X) break;
+        }
+        population[i].setVal(temp);
+    }
 }
 
 // For now, assuming fixed population size
-int GA::getNextPopulation ()
+int S_GA::getNextPopulation ()
 {
     return nCurrent;
 }
 
-void GA::selection ()
+void S_GA::selection ()
 {
     //rwSelection ();
     tournamentSelection ();
 }
 
-// Roulette wheel selection
-// This is a O(n^2) implementation
-// You can achieve O(nlogn) by using binary search
-void GA::rwSelection ()
-{
-    int i, j;
-
-    // Adjusting population size 
-    nNextGeneration = getNextPopulation ();
-
-    if (nNextGeneration != nCurrent) {
-        delete[]selectionIndex;
-        delete[]offspring;
-        selectionIndex = new int[nNextGeneration];
-        offspring = new Chromosome[nNextGeneration];
-
-        for (i = 0; i < nNextGeneration; i++)
-            offspring[i].init (ell);
-    }
-
-    double totalFitness = 0.0;
-    for (i = 0; i < nCurrent; i++) 
-	totalFitness += population[i].getFitness();
-
-    for (i = 0; i < nNextGeneration; i++) {
-	double pointer = totalFitness * myRand.uniform();
-	int index = -1;
-	double partialSum = 0.0;
-	for (j = 0; j < nCurrent; j++) {
-	    partialSum += population[j].getFitness();
-            if (partialSum >= pointer) {
-                index = j;
-                break;
-            }
-	}
-	if (index == -1) index = nCurrent - 1;
-
-	selectionIndex[i] = index;
-    }
-
-}
-
 // tournamentSelection without replacement
-void GA::tournamentSelection ()
+void S_GA::tournamentSelection ()
 {
 
     int i, j;
@@ -163,10 +155,7 @@ void GA::tournamentSelection ()
         delete[]selectionIndex;
         delete[]offspring;
         selectionIndex = new int[nNextGeneration];
-        offspring = new Chromosome[nNextGeneration];
-
-        for (i = 0; i < nNextGeneration; i++)
-            offspring[i].init (ell);
+        offspring = new S_Chromosome[nNextGeneration];
     }
 
     int randArray[selectionPressure * nNextGeneration];
@@ -215,13 +204,13 @@ void GA::tournamentSelection ()
 }
 
 
-void GA::crossover ()
+void S_GA::crossover ()
 {
     int i;
 
     if ((nNextGeneration & 0x1) == 0) { 
-    	// nNextGeneration is even
-    	
+        // nNextGeneration is even
+
         for (i = 0; i < nNextGeneration; i += 2)
             pairwiseXO (population[selectionIndex[i]], population[selectionIndex[i + 1]],
                 offspring[i], offspring[i + 1]);
@@ -239,12 +228,10 @@ void GA::crossover ()
 }
 
 
-void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2)
+void S_GA::pairwiseXO (const S_Chromosome & p1, const S_Chromosome & p2, S_Chromosome & c1, S_Chromosome & c2)
 {
     if (myRand.uniform () < pc) {
-	//onePointXO (p1, p2, c1, c2);
-    //uniformXO (p1, p2, c1, c2, 0.5);
-    extenedLineXO(p1, p2, c1, c2, 0.25);
+        onePointXO (p1, p2, c1, c2);
     }
     else {
         c1 = p1;
@@ -252,79 +239,72 @@ void GA::pairwiseXO (const Chromosome & p1, const Chromosome & p2, Chromosome & 
     }
 }
 
-void GA::extenedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2, double alpha_w)
+void S_GA::onePointXO (const S_Chromosome & p1, const S_Chromosome & p2, S_Chromosome & c1, S_Chromosome & c2)
 {
-    int i;
-    double alpha;
-    for (i = 0; i < ell; i++) {
-        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
-        c1.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
-        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
-        c2.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
+    //TODO
+    string s1, s2, o1, o2;
+    s1 = p1.getVal();
+    s2 = p2.getVal();
+    int s1_length = s1.length(), s2_length = s2.length();
+    int crossSite1, crossSite2, c1_length, c2_length;
+
+    while(true) {
+        crossSite1 = myRand.uniformInt(1, s1_length);
+        crossSite2 = myRand.uniformInt(1, s2_length);
+        c1_length = s1_length - crossSite1 + crossSite2;
+        c2_length = s2_length + crossSite1 - crossSite2;
+        if(c1_length <= max_stage && c2_length <= max_stage) break;
     }
-    /*
-    cout << "parent" << endl;
-    p1.printf();cout<<endl;
-    p2.printf();cout<<endl;
-    cout << "offspring" <<endl;
-    c1.printf();cout<<endl;
-    c2.printf();cout<<endl;
-    */
+
+    // four cases
+    if( crossSite1 == s1_length && crossSite2 == s2_length ){
+        o1 = s1;
+        o2 = s2;
+    }
+    else if( crossSite1 == s1_length) {
+        o1 = s1 + s2.substr(crossSite2);
+        o2 = s2.substr(0, crossSite2);
+    }
+    else if( crossSite2 == s2_length) {
+        o1 = s1.substr(0, crossSite1);
+        o2 = s2 + s1.substr(crossSite1);
+    }
+    else {
+        o1 = s1.substr(0, crossSite1) + s2.substr(crossSite2);
+        o2 = s2.substr(0, crossSite2) + s1.substr(crossSite1);
+    }
+
+    cout << "before: " << s1 << "," << s2 << endl;
+    cout << "cross: " << crossSite1 << "," << crossSite2 << endl;
+    cout << "after: " << o1 << "," << o2 << endl;
+
+    c1.setVal (o1);
+    c2.setVal (o2);
 }
 
-void GA::onePointXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2)
-{
-    int i;
-    int crossSite = myRand.uniformInt(1, ell-1);
-
-    for (i = 0; i < crossSite; i++) {
-            c1.setVal (i, p1.getVal(i));
-            c2.setVal (i, p2.getVal(i));
-    }
-
-    for (i = crossSite; i < ell; i++) {
-            c1.setVal (i, p2.getVal(i));
-            c2.setVal (i, p1.getVal(i));
-    }
-}
-
-void GA::uniformXO (const Chromosome & p1, const Chromosome & p2, Chromosome & c1, Chromosome & c2, double prob)
-{
-    int i;
-
-    for (i = 0; i < ell; i++) {
-        if (myRand.flip (prob)) {
-            c1.setVal (i, p1.getVal(i));
-            c2.setVal (i, p2.getVal(i));
-        }
-        else {
-            c1.setVal (i, p2.getVal(i));
-            c2.setVal (i, p1.getVal(i));
-        }
-    }
-}
-
-void GA::mutation ()
+/*
+void S_GA::mutation ()
 {
     //simpleMutation ();
     mutationClock ();
 }
 
 
-void GA::simpleMutation ()
+void S_GA::simpleMutation ()
 {
     int i, j;
 
     for (i = 0; i < nNextGeneration; i++)
-        for (j = 0; j< ell; j++)
+        for (j = 0; j< offspring[i].getLength(); j++)
             if (myRand.flip(pm)) {
-                offspring[i].setVal(j, myRand.uniformInt( 1, 100));
+                offspring[i].setVal(j, );
             }
 }
 
-void GA::mutationClock ()
+void S_GA::mutationClock ()
 {
-    if (pm < 1e-6) return; // can't deal with too small pm
+    //TODO
+    if (pm <= 1e-6) return; // can't deal with too small pm
 
     int pointer = (int) (log(1-myRand.uniform()) / log(1-pm) + 1);
 
@@ -339,9 +319,9 @@ void GA::mutationClock ()
 	pointer += (int) (log(1-myRand.uniform()) / log(1-pm) + 1);
     };
 }
+*/
 
-
-void GA::showStatistics ()
+void S_GA::showStatistics ()
 {
 
     printf ("Gen:%d  Fitness:(Max/Mean/Min):%f/%f/%f Chromsome Length:%d\n",
@@ -353,57 +333,29 @@ void GA::showStatistics ()
 }
 
 
-void GA::replacePopulation ()
+void S_GA::replacePopulation ()
 {
-    int i;
+    //TODO
+    if (nNextGeneration != nCurrent) {
+        delete[]population;
+        population = new S_Chromosome[nNextGeneration];
+    }
 
-    if(!RTR_on) { //RTR off
-        if (nNextGeneration != nCurrent) {
-            delete[]population;
-            population = new Chromosome[nNextGeneration];
-        }
-
-        for (i = 0; i < nNextGeneration; i++)
+    for (int i = 0; i < nNextGeneration; i++)
+        if( i != bestIndex)
             population[i] = offspring[i];
 
-        nCurrent = nNextGeneration;
-    }
-    else { //RTR on
-        int j, min, index, temp;
-
-        for( i = 0; i < nNextGeneration; i++) {
-            min = INT_MAX;
-            for( j = 0; j < nCurrent; j++) {
-                temp = gene_distance( offspring[i], population[j]);
-                if( temp < min) {
-                    index = j;
-                    min = temp;
-                }
-            }
-            if( population[index].getFitness() > offspring[i].getFitness())
-                population[index] = offspring[i];
-        }
-    }
-}
-
-int GA::gene_distance (const Chromosome & c1, const Chromosome & c2) const
-{
-    int dist = 0, temp;
-    for (int i = 0; i < ell; i++) {
-        temp = abs(c1.getVal(i)- c2.getVal(i));
-        dist += temp*temp;
-    }
-    return dist;
+    nCurrent = nNextGeneration;
 }
 
 
-void GA::oneRun ()
+void S_GA::oneRun ()
 {
     int i;
 
     selection ();
     crossover ();
-    mutation ();
+    //mutation ();
     replacePopulation ();
 
     double min = DBL_MAX;
@@ -416,17 +368,17 @@ void GA::oneRun ()
         }
         stFitness.record (fitness);
     }
-    population[bestIndex].output();
+    //population[bestIndex].printf();
 
+    //TODO
+    //record best guy
     if( first_time == true){
-        for( i = 0; i < ell; ++i)
-            best_guy->setVal( i, population[bestIndex].getVal(i));
+        best_guy = population[bestIndex];
         first_time =false;
     }
     else{
-        if( best_guy->getFitness() > population[bestIndex].getFitness() ){
-            for( i = 0; i < ell; i++)
-                best_guy->setVal( i, population[bestIndex].getVal(i));
+        if( best_guy.getFitness() > population[bestIndex].getFitness() ){
+                best_guy = population[bestIndex];
             best_counter = 0;
         }
         best_counter++;
@@ -438,7 +390,7 @@ void GA::oneRun ()
 }
 
 
-int GA::doIt (bool output)
+int S_GA::doIt ()
 {
     generation = 0;
     best_counter = 0;
@@ -449,17 +401,14 @@ int GA::doIt (bool output)
     }
 
     // record best chromosome
-    if(!RTR_on){
-        cout<< "best guy --- for "<< best_counter <<" generation(s)" <<endl;
-        best_guy->printf();
-        cout << "\nfitness is "<<best_guy->getFitness() <<endl;
-    }
+    cout<< "best guy --- for "<< best_counter <<" generation(s)" <<endl;
+    best_guy.printf();
 
     return generation;
 }
 
 
-bool GA::shouldTerminate ()
+bool S_GA::shouldTerminate ()
 {
     bool termination = false;
 
@@ -475,15 +424,11 @@ bool GA::shouldTerminate ()
             termination = true;
     }
 
-    // Found a satisfactory solution
-    //if (population[0].getMaxFitness() <= stFitness.getMean();)
-    //    termination = true;
-
     // The population loses diversity
     if (stFitness.getMax()-1e-6 < stFitness.getMean())
         termination = true;
 
-    if ( RTR_on && best_counter > RTR_THRESHOLD)
+    if (best_counter > best_th)
         termination = true;
 
     return termination;

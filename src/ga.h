@@ -18,12 +18,12 @@ class GA
     public:
         GA ();
         GA (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file, string devicelist, double centerfreq, bool _RTR_on, int RTR_th);
 
         ~GA ();
 
         void init (int n_ell, int n_nInitial, int n_selectionPressure, double n_pc,
-            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on);
+            double n_pm, double p_winner, int n_maxGen, int n_maxFe, string source_file, string target_file,string devicelist, double centerfreq, bool _RTR_on, int RTR_th);
 
         void initializePopulation ();
         void evaluate ();
@@ -53,7 +53,7 @@ class GA
 
         void showStatistics ();
         void oneRun ();
-        int doIt ();
+        double doIt (int* param);
 
         bool shouldTerminate ();
         int getNextPopulation ();
@@ -83,6 +83,7 @@ class GA
         int bestIndex;
 
         int best_counter;
+        int RTR_threshold;
 
         bool first_time;
         bool RTR_on;

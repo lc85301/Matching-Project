@@ -8,69 +8,51 @@
 #include <cmath>
 #include <float.h>
 #include <cassert>
+#include <string>
 #include "global.h"
-#include "chromosome.h"
-#include "line_operator.h"
+#include "s-chromosome.h"
+#include "ga.h"
+using namespace std;
 
-S2P_reader Chromosome::source_list;
-S2P_reader Chromosome::target_list;
-string Chromosome::device_list;
-double Chromosome::center_freq;
-//double Chromosome::up_freq;
-//double Chromosome::down_freq;
-//double Chromosome::RL_req;
+int S_Chromosome::nInitial;
+int S_Chromosome::selectionPressure;
+double S_Chromosome::pc;
+double S_Chromosome::pm;
+double S_Chromosome::p_winner;
+int S_Chromosome::maxGen;
+int S_Chromosome::maxFe;
+string S_Chromosome::source_file;
+string S_Chromosome::target_file;
+double S_Chromosome::centerfreq;
+bool S_Chromosome::RTR_on;
+int S_Chromosome::RTR_th;
 
-Chromosome::Chromosome ()
+
+S_Chromosome::S_Chromosome ()
 {
-    length = 0;
-    gene = NULL;
+    gene = "";
+    param = NULL;
+    evaluated = false;
+}
+
+string S_Chromosome::getVal () const
+{
+    return gene;
+}
+
+void S_Chromosome::setVal (string val)
+{
+    if (!val.length())
+        outputErrMsg ("S_Chromosome with 0 length is invalid");
+
+    cout << "gene: " << val << endl;
+    gene = val;
+    param = new int[gene.length()];
     evaluated = false;
 }
 
 
-Chromosome::Chromosome (int n_length)
-{
-    gene = NULL;
-    init (n_length);
-}
-
-
-Chromosome::~Chromosome ()
-{
-    delete[]gene;
-}
-
-void Chromosome::init (int n_length)
-{
-    length = n_length;
-
-    if (gene != NULL)
-        delete[]gene;
-
-    gene = new int[length];
-    evaluated = false;
-}
-
-int Chromosome::getVal (int index) const
-{
-    if (index < 0 || index > length)
-        outputErrMsg ("Index overrange in Chromosome::operator[]");
-
-    return gene[index];
-}
-
-
-void Chromosome::setVal (int index, int val)
-{
-    if (index < 0 || index > length)
-        outputErrMsg ("Index overrange in Chromosome::operator[]");
-
-    gene[index] = val;
-    evaluated = false;
-}
-
-
-double Chromosome::getFitness ()
+double S_Chromosome::getFitness ()
 {
     if (evaluated)
         return fitness;
@@ -79,135 +61,57 @@ double Chromosome::getFitness ()
 }
 
 
-bool Chromosome::isEvaluated () const
+bool S_Chromosome::isEvaluated () const
 {
     return evaluated;
 }
 
 
-double Chromosome::evaluate ()
+double S_Chromosome::evaluate ()
 {
     evaluated = true;
-    //return oneMax ();
-	return matching ();
+    return subGA ();
 }
 
-double Chromosome::matching() const{
-	double line_fitness = 0;
-	int list_index = 0;
-	complex<double> point;
-	double freqratio;
-	double line_length;
-	vector<freq_response>& source = Chromosome::source_list.get_list();
-	vector<freq_response>& target = Chromosome::target_list.get_list();
-	//source_list and target_list has to be same size
-	assert(source.size() == target.size());
-
-	for (vector<freq_response>::iterator s_it = source.begin(), t_it = target.begin();
-		 s_it != source.end();
-		 ++s_it, ++t_it
-		 ) {
-		list_index = 0;
-		point = s_it->S11();
-		freqratio = s_it->freq() / Chromosome::center_freq;
-		while (Chromosome::device_list[list_index] !='\0' ) {
-			line_length = getVal(list_index);
-			if (line_length > 90 or line_length < 20) { 
-				line_fitness += 10000;
-			}
-			switch(Chromosome::device_list[list_index]){
-			  case 's':
-			  case 'S':
-				  point = ShortStub(point,freqratio*line_length);
-				  break;
-			  case 't':
-			  case 'T':
-				  point = Tline(point, freqratio*line_length);
-				  break;
-			  case 'o':
-			  case 'O':
-				  if (line_length > 75) { line_fitness += 10000; }
-				  point = OpenStub(point, freqratio*line_length);
-				  break;
-			}
-			++list_index;
-		}
-		double temp = abs(point - t_it->S11());
-		line_fitness += temp * temp;
-		//********************************************
-		// Code: RL
-		// Description: change point on smith chart to
-		// RL, and compare with user defined requirement
-		//********************************************
-		//if (Chromosome::down_freq < s_it->freq()
-		//	   && Chromosome::up_freq > s_it->freq()
-		//) {
-		//	double RL = log10(line_fitness);
-		//	if (RL > Chromosome::RL_req) {
-		//		line_fitness += 10000;
-		//	}
-		//}
-	}
-	return line_fitness;
-}
-
-void Chromosome:: output() const
+double S_Chromosome::subGA()
 {
-	cout << "chromosome result\n";
-	for (int i = 0; i < length; ++i) {
-		cout << "electric length of " << i << "th line is: " << getVal(i)<< endl;
-	}
-}
-
-// OneMax
-double Chromosome::oneMax () const
-{
-    int i;
-    double result = 0;
-
-    for (i = 0; i < length; i++)
-        result += gene[i];
-
-    return result;
+    double _fitness;
+    cout << gene <<" "<< gene.length() <<endl;
+    GA ga ( gene.length(), nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, source_file, target_file, gene, centerfreq, RTR_on, RTR_th);
+    _fitness = ga.doIt (param);
+    return _fitness;
 }
 
 
-Chromosome & Chromosome::operator= (const Chromosome & c)
+S_Chromosome & S_Chromosome::operator= (const S_Chromosome & c)
 {
-    int i;
-
-    if (length != c.length) {
-        length = c.length;
-        delete[]gene;
-        init (length);
-    }
-
     evaluated = c.evaluated;
     fitness = c.fitness;
+    gene = c.gene;
 
-    for (i = 0; i < length; i++)
-        gene[i] = c.gene[i];
+    delete []param;
+    param = new int[gene.length()];
+    for ( unsigned i=0; i < gene.length(); i++)
+        param[i] = c.param[i];
 
     return *this;
 }
 
 
-void Chromosome::printf () const
+void S_Chromosome::printf () const
 {
-    int i;
-    for (i = 0; i < length; i++)
-        ::printf ("%d,", gene[i]);
+    cout << "s-chromosome: " << gene << endl;
+    if(evaluated) {
+        cout << "***fitness: " << fitness << " param: ";
+        for ( unsigned i=0; i < gene.length(); i++)
+            cout << param[i] << " ";
+            cout << endl;
+    }
 }
 
 
-int Chromosome::getLength () const
+int S_Chromosome::getLength () const
 {
-    return length;
+    return gene.length();
 }
 
-
-double Chromosome::getMaxFitness () const
-{
-    // For OneMax
-    return ((double)length-1e-6);
-}

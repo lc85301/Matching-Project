@@ -3,7 +3,7 @@
  *   tianliyu@cc.ee.ntu.edu.tw                                             *
  ***************************************************************************/
 
-#include <cstdio>
+#include <iostream>
 #include <vector>
 #include <cmath>
 #include <float.h>
@@ -11,6 +11,7 @@
 #include "global.h"
 #include "chromosome.h"
 #include "line_operator.h"
+using namespace std;
 
 S2P_reader Chromosome::source_list;
 S2P_reader Chromosome::target_list;
@@ -196,7 +197,8 @@ void Chromosome::printf () const
 {
     int i;
     for (i = 0; i < length; i++)
-        ::printf ("%d,", gene[i]);
+        cout << gene[i] <<",";
+    cout << endl;
 }
 
 

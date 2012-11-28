@@ -20,7 +20,7 @@ TLIB =
 
 GOAL = SGA
 
-SRC = ga.cpp GAmain.cpp myrand.cpp chromosome.cpp global.cpp mt19937ar.cpp line_operator.cpp
+SRC = ga.cpp s-ga.cpp GAmain.cpp myrand.cpp chromosome.cpp s-chromosome.cpp global.cpp mt19937ar.cpp line_operator.cpp
 
 
 OBJ = $(addsuffix .o, $(basename $(SRC)))

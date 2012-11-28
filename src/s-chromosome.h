@@ -3,38 +3,31 @@
  *   tianliyu@cc.ee.ntu.edu.tw                                             *
  ***************************************************************************/
 
-#ifndef _CHROMOSOME_H
-#define _CHROMOSOME_H
+#ifndef _S_CHROMOSOME_H
+#define _S_CHROMOSOME_H
 
-#include "S2P_reader.h"
+#include <string>
+using namespace std;
 
-
-class Chromosome
+class S_Chromosome
 {
     public:
-        Chromosome ();
-        Chromosome (int n_ell);
+        S_Chromosome ();
 
-        ~Chromosome ();
+        //~S_Chromosome ();
 
-        Chromosome& operator= (const Chromosome & c);
+        S_Chromosome& operator= (const S_Chromosome & c);
 
-        void init (int n_ell);
+        void init (string _gene);
 
-        int getVal (int index) const;
-        void setVal (int index, int val);
+        string getVal () const;
+        void setVal (string val);
 
         double getFitness ();
 
         /** real evaluator */
         double evaluate ();
-
-        double oneMax () const;
-
-		// add by yodalee and georgemouse
-        double matching () const;
-		void output() const;
-		// end add
+        double subGA(); //add by georgemouse
 
         bool isEvaluated () const;
 
@@ -42,18 +35,22 @@ class Chromosome
 
         int getLength () const;
 
-        double getMaxFitness () const;
+        static int nInitial;
+        static int selectionPressure;
+        static double pc;
+        static double pm;
+        static double p_winner;
+        static int maxGen;
+        static int maxFe;
+        static string source_file;
+        static string target_file;
+        static double centerfreq;
+        static bool RTR_on;
+        static int RTR_th;
 
-		static S2P_reader source_list;
-		static S2P_reader target_list;
-		static string device_list;
-		static double center_freq;
-		//static double up_freq;
-		//static double down_freq;
-		//static souble RL_req;
     protected:
-        int *gene;
-        int length;
+        string gene;
+        int *param;
         double fitness;
         bool evaluated;
 };
