@@ -198,7 +198,6 @@ void Chromosome::printf () const
     int i;
     for (i = 0; i < length; i++)
         cout << gene[i] <<",";
-    cout << endl;
 }
 
 

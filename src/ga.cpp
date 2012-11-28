@@ -432,7 +432,7 @@ void GA::oneRun ()
         best_counter++;
     }
 
-    //showStatistics ();
+    showStatistics ();
 
     generation++;
 }
@@ -450,9 +450,9 @@ double GA::doIt (int *param)
 
     // record best chromosome
     //if(!RTR_on){
-        cout<< "best guy --- for "<< best_counter <<" generation(s)" <<endl;
+        cout<< "best guy --- for "<< best_counter <<" generation(s) ";
         best_guy->printf();
-        cout << "fitness is "<<best_guy->getFitness() <<endl;
+        cout << " fitness is "<<best_guy->getFitness() <<endl;
     //}
 
     for( int i=0; i < ell; i++){
