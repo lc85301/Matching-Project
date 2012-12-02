@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <vector>
-#include <cmath>
 #include <float.h>
 #include <cassert>
 #include "global.h"
@@ -89,8 +88,17 @@ bool Chromosome::isEvaluated () const
 double Chromosome::evaluate ()
 {
     evaluated = true;
-    //return oneMax ();
+	checked = true;
 	return matching ();
+    //return oneMax ();
+}
+
+bool Chromosome::check()
+{
+    evaluated = true;
+	checked = true;
+	matching();
+	return within_constraint;
 }
 
 double Chromosome::matching() const{
@@ -99,6 +107,7 @@ double Chromosome::matching() const{
 	complex<double> point;
 	double freqratio;
 	double line_length;
+	within_constraint = true;
 	vector<freq_response>& source = Chromosome::source_list.get_list();
 	vector<freq_response>& target = Chromosome::target_list.get_list();
 	//source_list and target_list has to be same size
@@ -135,21 +144,17 @@ double Chromosome::matching() const{
 		}
 		double temp = abs(point - t_it->S11());
 		line_fitness += temp * temp;
-		//********************************************
-		// Code: RL
-		// Description: change point on smith chart to
-		// RL, and compare with user defined requirement
-		//********************************************
-		//if (Chromosome::down_freq < s_it->freq()
-		//	   && Chromosome::up_freq > s_it->freq()
-		//) {
-		//	double RL = log10(line_fitness);
-		//	if (RL > Chromosome::RL_req) {
-		//		line_fitness += 10000;
-		//	}
-		//}
+		// check constraint
+		if (s_it->freq() > Chromosome::down_freq && s_it->freq() < up_freq && line_fitness > Chromosome::RL) {
+			within_constraint = false;
+		}
 	}
 	return line_fitness;
+}
+
+bool Chromosome::isCheck() const
+{
+	return checked;
 }
 
 void Chromosome:: output() const

@@ -34,6 +34,10 @@ class Chromosome
 		// add by yodalee and georgemouse
         double matching () const;
 		void output() const;
+
+		bool isCheck() const;
+		bool check();
+		
 		// end add
 
         bool isEvaluated () const;
@@ -44,6 +48,7 @@ class Chromosome
 
         double getMaxFitness () const;
 
+		// static member include constraint, fitness evaluate data
 		static S2P_reader source_list;
 		static S2P_reader target_list;
 		static string device_list;
@@ -55,6 +60,8 @@ class Chromosome
         int *gene;
         int length;
         double fitness;
+		bool within_constraint;
         bool evaluated;
+		bool checked;
 };
 #endif
