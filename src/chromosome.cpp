@@ -101,7 +101,7 @@ bool Chromosome::check()
 	return within_constraint;
 }
 
-double Chromosome::matching() const{
+double Chromosome::matching(){
 	double line_fitness = 0;
 	int list_index = 0;
 	complex<double> point;
@@ -145,7 +145,7 @@ double Chromosome::matching() const{
 		double temp = abs(point - t_it->S11());
 		line_fitness += temp * temp;
 		// check constraint
-		if (s_it->freq() > Chromosome::down_freq && s_it->freq() < up_freq && line_fitness > Chromosome::RL) {
+		if (s_it->freq() > down_freq && s_it->freq() < up_freq && temp*temp > RL) {
 			within_constraint = false;
 		}
 	}
@@ -190,6 +190,7 @@ Chromosome & Chromosome::operator= (const Chromosome & c)
 
     evaluated = c.evaluated;
     fitness = c.fitness;
+    within_constraint = c.within_constraint;
 
     for (i = 0; i < length; i++)
         gene[i] = c.gene[i];

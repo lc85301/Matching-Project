@@ -53,7 +53,7 @@ class GA
 
         void showStatistics ();
         void oneRun ();
-        double doIt (int* param);
+        double doIt (int* param, bool &within_constraint);
 
         bool shouldTerminate ();
         int getNextPopulation ();

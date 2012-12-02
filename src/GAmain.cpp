@@ -22,13 +22,13 @@ int main (int argc, char *argv[])
     int max_stage=7, s_nInitial=20, s_selectionPressure=2, s_maxGen=200, s_maxFe=-1, best_th=5;
     double s_pc=1, s_pm=1.0E-6, s_p_winner=1.0;
     // fitness layer GA parameter
-    int nInitial=100, selectionPressure=2, maxGen=200, maxFe=-1, RTR_th=30;
+    int nInitial=100, selectionPressure=2, maxGen=200, maxFe=-1, RTR_th=30, RL=-10;
     string source_file="source", target_file="target";
-    double pc=1, pm=1.0E-6, center_freq=2.4E9, p_winner=1.0;
+    double pc=1, pm=1.0E-6, center_freq=2.4E9, up_freq=2.4E9, down_freq=2.4E9, p_winner=1.0;
     bool RTR_on = false;
 
     char c;
-    while((c=getopt(argc, argv, "hN:S:W:M:G:T:n:s:w:m:g:c:i:o:d:t:r")) != -1)
+    while((c=getopt(argc, argv, "hN:S:W:M:G:T:n:s:w:m:g:c:i:o:u:d:R:t:r")) != -1)
     {
         switch(c)
         {
@@ -80,6 +80,15 @@ int main (int argc, char *argv[])
             case 't':
                 RTR_th = atoi(optarg);
                 break;
+            case 'u':
+                up_freq = atof(optarg);
+                break;
+            case 'd':
+                down_freq = atof(optarg);
+                break;
+            case 'R':
+                RL = atoi(optarg);
+                break;
             case 'r':
                 RTR_on = true;
                 break;
@@ -92,7 +101,7 @@ int main (int argc, char *argv[])
 
     S_GA ga ( max_stage, s_nInitial, s_selectionPressure, s_pc, s_pm, s_p_winner, s_maxGen, s_maxFe, best_th,
              nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe,
-            source_file, target_file, center_freq, RTR_on, RTR_th);
+            source_file, target_file, center_freq, up_freq, down_freq, RL, RTR_on, RTR_th);
     ga.doIt ();
     fflush (NULL);
 

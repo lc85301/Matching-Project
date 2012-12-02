@@ -33,9 +33,9 @@ S_GA::S_GA ()
 }
 
 
-S_GA::S_GA (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th)
+S_GA::S_GA (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, double _up_freq, double _down_freq_, int _RL, bool _RTR_on, int _RTR_th)
 {
-    init (_max_stage, _s_nInitial, _s_selectionPressure, _s_pc, _s_pm, _s_p_winner, _s_maxGen, _s_maxFe,  _best_th, _nInitial, _selectionPressure, _pc, _pm, _p_winner, _maxGen, _maxFe, _source_file, _target_file, _centerfreq, _RTR_on, _RTR_th);
+    init (_max_stage, _s_nInitial, _s_selectionPressure, _s_pc, _s_pm, _s_p_winner, _s_maxGen, _s_maxFe,  _best_th, _nInitial, _selectionPressure, _pc, _pm, _p_winner, _maxGen, _maxFe, _source_file, _target_file, _centerfreq, _up_freq, _down_freq_, _RL, _RTR_on, _RTR_th);
 }
 
 
@@ -48,7 +48,7 @@ S_GA::~S_GA ()
 
 
 void
-S_GA::init (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th)
+S_GA::init (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th, int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe, string _source_file, string _target_file, double _centerfreq, double _up_freq, double _down_freq_, int _RL, bool _RTR_on, int _RTR_th)
 {
     max_stage = _max_stage;
 
@@ -78,6 +78,9 @@ S_GA::init (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s
     Chromosome::center_freq = _centerfreq;
     Chromosome::source_list.init(_source_file);
     Chromosome::target_list.init(_target_file);
+    Chromosome::up_freq = _up_freq;
+    Chromosome::down_freq = _down_freq_;
+    Chromosome::RL = pow( 10, (double)_RL/10);
 
     population = new S_Chromosome[nInitial];
     offspring = new S_Chromosome[nInitial];
@@ -361,6 +364,8 @@ void S_GA::oneRun ()
     //mutation ();
     replacePopulation ();
 
+    //TODO
+    // first stage : guy with best fitness
     double min = DBL_MAX;
     stFitness.reset ();
     for (i = 0; i < nCurrent; i++) {
@@ -371,16 +376,41 @@ void S_GA::oneRun ()
         }
         stFitness.record (fitness);
     }
-    //population[bestIndex].printf();
 
-    //TODO
-    //record best guy
+    // second stage : guy within constraint and shortest
+    for (i = 0; i < nCurrent; i++) {
+        if (population[i].isWithinConstraint()){
+            any_within_constraint = true;
+            break;
+        }
+    }
+    if(any_within_constraint){
+        int opt_stage = max_stage;
+        double min = DBL_MAX;
+        for (i = 0; i < nCurrent; i++) {
+            // if shorter && within constraint, keep this
+            if (opt_stage > population[i].getLength() && population[i].isWithinConstraint()) {
+                min = population[i].getFitness();
+                opt_stage = population[i].getLength();
+                bestIndex = i;
+            }
+            // if equal && within constraint, check if fitness is better
+            if (opt_stage == population[i].getLength() && population[i].isWithinConstraint() && population[i].getFitness() < min) {
+                min = population[i].getFitness();
+                opt_stage = population[i].getLength();
+                bestIndex = i;
+            }
+
+        }
+    }
+
+    // record best guy
     if( first_time == true){
         best_guy = population[bestIndex];
         first_time =false;
     }
     else{
-        if( best_guy.getFitness() > population[bestIndex].getFitness() ){
+        if( best_guy.getFitness() != population[bestIndex].getFitness() ){
                 best_guy = population[bestIndex];
             best_counter = 0;
         }
@@ -399,6 +429,7 @@ int S_GA::doIt ()
     best_counter = 0;
 
     first_time = true;
+    any_within_constraint = false;
     while (!shouldTerminate ()) {
         oneRun ();
     }

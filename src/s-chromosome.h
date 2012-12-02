@@ -30,6 +30,7 @@ class S_Chromosome
         double subGA(); //add by georgemouse
 
         bool isEvaluated () const;
+        bool isWithinConstraint() const;
 
         void printf () const;
 
@@ -53,5 +54,6 @@ class S_Chromosome
         int *param;
         double fitness;
         bool evaluated;
+        bool within_constraint;
 };
 #endif
