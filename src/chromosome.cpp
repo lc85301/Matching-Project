@@ -16,9 +16,9 @@ S2P_reader Chromosome::source_list;
 S2P_reader Chromosome::target_list;
 string Chromosome::device_list;
 double Chromosome::center_freq;
-//double Chromosome::up_freq;
-//double Chromosome::down_freq;
-//double Chromosome::RL_req;
+double Chromosome::up_freq;
+double Chromosome::down_freq;
+double Chromosome::RL;
 
 Chromosome::Chromosome ()
 {
