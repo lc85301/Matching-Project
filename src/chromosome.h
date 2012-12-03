@@ -32,7 +32,7 @@ class Chromosome
         double oneMax () const;
 
 		// add by yodalee and georgemouse
-        double matching () const;
+        double matching ();
 		void output() const;
 
 		bool isCheck() const;
