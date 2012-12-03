@@ -20,13 +20,13 @@ class S_GA
         S_GA ();
         S_GA (int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th,
             int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe,
-            string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th);
+            string _source_file, string _target_file, double _centerfreq, double _up_freq, double _down_freq_, int _RL, bool _RTR_on, int _RTR_th);
 
         ~S_GA ();
 
         void init ( int _max_stage, int _s_nInitial, int _s_selectionPressure, double _s_pc, double _s_pm, double _s_p_winner, int _s_maxGen, int _s_maxFe, int _best_th,
                     int _nInitial, int _selectionPressure, double _pc, double _pm, double _p_winner, int _maxGen, int _maxFe,
-                    string _source_file, string _target_file, double _centerfreq, bool _RTR_on, int _RTR_th);
+                    string _source_file, string _target_file, double _centerfreq, double _up_freq, double _down_freq_, int _RL, bool _RTR_on, int _RTR_th);
 
         void initializePopulation ();
         void evaluate ();
@@ -80,5 +80,6 @@ class S_GA
         int best_counter;
         int best_th;
         bool first_time;
+        bool any_within_constraint;
 };
 #endif

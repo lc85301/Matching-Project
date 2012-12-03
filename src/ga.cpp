@@ -432,7 +432,7 @@ void GA::oneRun ()
 }
 
 
-double GA::doIt (int *param)
+double GA::doIt (int *param, bool &within_constraint)
 {
     generation = 0;
     best_counter = 0;
@@ -443,15 +443,17 @@ double GA::doIt (int *param)
     }
 
     // record best chromosome
-    //if(!RTR_on){
-        cout<< "best guy --- for "<< best_counter <<" generation(s) ";
-        best_guy.printf();
-        cout << " fitness is "<<best_guy.getFitness() <<endl;
-    //}
-
     for( int i=0; i < ell; i++){
         param[i] = best_guy.getVal(i);
     }
+
+    within_constraint = best_guy.check();
+
+    //if(!RTR_on){
+        cout<< "best guy --- for "<< best_counter <<" generation(s) ";
+        best_guy.printf();
+        cout << " fitness is "<<best_guy.getFitness() <<", within constraint: " << within_constraint <<endl;
+    //}
 
     return best_guy.getFitness();
 }

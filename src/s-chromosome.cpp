@@ -66,6 +66,10 @@ bool S_Chromosome::isEvaluated () const
     return evaluated;
 }
 
+bool S_Chromosome::isWithinConstraint() const
+{
+    return within_constraint;
+}
 
 double S_Chromosome::evaluate ()
 {
@@ -78,7 +82,7 @@ double S_Chromosome::subGA()
     double _fitness;
     cout << gene <<endl;
     GA ga ( gene.length(), nInitial, selectionPressure, pc, pm, p_winner, maxGen, maxFe, gene, RTR_on, RTR_th);
-    _fitness = ga.doIt (param);
+    _fitness = ga.doIt (param, within_constraint);
     return _fitness;
 }
 
