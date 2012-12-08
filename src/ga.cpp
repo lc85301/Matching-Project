@@ -88,7 +88,7 @@ void GA::initializePopulation ()
 
     for (i = 0; i < nInitial; i++)
         for (j = 0; j < ell; j++)
-                population[i].setVal (j, myRand.uniformInt( 1, 100));
+			population[i].setVal (j, myRand.uniformInt( 1, 100));
 
 }
 
