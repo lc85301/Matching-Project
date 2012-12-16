@@ -13,7 +13,7 @@
 #include "statistics.h"
 #include "myrand.h"
 #include "ga.h"
-#include "S2P_reader.h"
+//#include "S2P_reader.h"
 using namespace std;
 
 GA::GA ()
@@ -252,11 +252,18 @@ void GA::extendedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosom
 {
     int i;
     double alpha;
+	int length;
     for (i = 0; i < ell; i++) {
-        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
-        c1.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
-        alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
-        c2.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i) + 0.5 ));
+		do {
+			alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
+			length = (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 ;
+		} while (length <= 0);
+        c1.setVal (i, length);
+		do {
+			alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
+			length = (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 ;
+		} while (length <= 0);
+        c2.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 );
     }
     /*
     cout << "parent" << endl;

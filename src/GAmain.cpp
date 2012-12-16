@@ -6,6 +6,8 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <cstdio>
+#include <cstdlib>
 #include <string>
 #include <unistd.h>
 
@@ -19,13 +21,13 @@ using namespace std;
 int main (int argc, char *argv[])
 {
     // structure layer GA parameter
-    int max_stage=7, s_nInitial=20, s_selectionPressure=2, s_maxGen=200, s_maxFe=-1, best_th=5;
+    int max_stage=7, s_nInitial=20, s_selectionPressure=2, s_maxGen=50, s_maxFe=-1, best_th=5;
     double s_pc=1, s_pm=1.0E-6, s_p_winner=1.0;
     // fitness layer GA parameter
-    int nInitial=100, selectionPressure=2, maxGen=200, maxFe=-1, RTR_th=30, RL=-10;
+    int nInitial=30, selectionPressure=2, maxGen=200, maxFe=-1, RTR_th=30, RL=-10;
     string source_file="source", target_file="target";
     double pc=1, pm=1.0E-6, center_freq=2.4E9, up_freq=2.4E9, down_freq=2.4E9, p_winner=1.0;
-    bool RTR_on = false;
+    bool RTR_on = true;
 
     char c;
     while((c=getopt(argc, argv, "hN:S:W:M:G:T:n:s:w:m:g:c:i:o:u:d:R:t:r")) != -1)
@@ -33,7 +35,7 @@ int main (int argc, char *argv[])
         switch(c)
         {
             case 'h':
-                printf ("usage:\n GA -n nInitial -s sPressure -w p_win -m pm -g maxGen -c center_freq -i source_file -o target_file -r\n-N s_nInitial -S s_sPressure -W s_p_win -M s_pm -G s_maxGen \ndefault:\n s=2, maxGen=200, maxFe=-1, cent_freq=2.4E9, pc=1, pm=1.0E-6, p_win=1.0\n source: source, target: target\n -r option is for RTR -t RTR threshold\n");
+                printf ("usage:\n GA -n nInitial -s sPressure -w p_win -m pm -g maxGen \n -c center_freq -u up_freq -d down_freq -i source_file -o target_file -R RL -t RTR_threshold -r\n -N s_nInitial -S s_sPressure -W s_p_win -M s_pm -G s_maxGen -T best_th_for_s(RTR)\ndefault:\n --parameter lyaer\n nInitial=30, s=2, maxGen=200, maxFe=-1, pc=1, pm=1.0E-6, p_win=1.0, RTR_th=30\n cent_freq=up_freq=down_freq=2.4E9, -r RTR_on(true)\n --structure layer\n max_stage=7, s_nInitial=20, s_sPressure=2, s_maxGen=50, s_maxFe=-1,\n best_th=5, s_pc=1, s_pm=1.0E-6, s_p_winner=1.0;\n");
                 return 0;
             case 'N':
                 s_nInitial = atoi(optarg);
