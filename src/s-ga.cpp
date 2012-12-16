@@ -178,6 +178,7 @@ void S_GA::tournamentSelection ()
 
         int winner = 0;
         double winnerFitness = DBL_MAX;
+        int opt_stage = max_stage;
         double temp = myRand.uniform();
 
         if(temp < p_winner){
@@ -185,14 +186,44 @@ void S_GA::tournamentSelection ()
                 int challenger = randArray[selectionPressure * i + j];
                 double challengerFitness = population[challenger].getFitness ();
 
-                if (challengerFitness < winnerFitness) {
-                    winner = challenger;
-                    winnerFitness = challengerFitness;
+                if( population[winner].isWithinConstraint() ) {
+                    if( population[challenger].isWithinConstraint()) {
+                        // case1: all in constraint
+                        if( opt_stage > population[challenger].getLength()) {
+                            winner = challenger;
+                            winnerFitness = challengerFitness;
+                            opt_stage = population[challenger].getLength();
+                        }
+                        else if( opt_stage == population[challenger].getLength() && challengerFitness < winnerFitness) {
+                            winner = challenger;
+                            winnerFitness = challengerFitness;
+                            opt_stage = population[challenger].getLength();
+                        }
+                    }
+                    else {
+                        // case2: challenger not in constraint, skip
+                        continue;
+                    }
                 }
-
+                else {
+                    if( population[challenger].isWithinConstraint()) {
+                        // case3: challenger in constraint, replace
+                            winner = challenger;
+                            winnerFitness = challengerFitness;
+                            opt_stage = population[challenger].getLength();
+                    }
+                    else {
+                        // case4: all not in constraint
+                        if (challengerFitness < winnerFitness) {
+                            winner = challenger;
+                            winnerFitness = challengerFitness;
+                            opt_stage = population[challenger].getLength();
+                        }
+                    }
+                }
             }
         }
-        else{ // loser wins
+        else{ // loser wins, selection doesn't consider constraint.
             for (j = 0; j < selectionPressure; j++) {
                 int challenger = randArray[selectionPressure * i + j];
                 double challengerFitness = population[challenger].getFitness ();
@@ -247,7 +278,6 @@ void S_GA::pairwiseXO (const S_Chromosome & p1, const S_Chromosome & p2, S_Chrom
 
 void S_GA::onePointXO (const S_Chromosome & p1, const S_Chromosome & p2, S_Chromosome & c1, S_Chromosome & c2)
 {
-    //TODO
     string s1, s2, o1, o2;
     s1 = p1.getVal();
     s2 = p2.getVal();
@@ -341,7 +371,6 @@ void S_GA::showStatistics ()
 
 void S_GA::replacePopulation ()
 {
-    //TODO
     if (nNextGeneration != nCurrent) {
         delete[]population;
         population = new S_Chromosome[nNextGeneration];
@@ -364,7 +393,6 @@ void S_GA::oneRun ()
     //mutation ();
     replacePopulation ();
 
-    //TODO
     // first stage : guy with best fitness
     double min = DBL_MAX;
     stFitness.reset ();
@@ -378,12 +406,15 @@ void S_GA::oneRun ()
     }
 
     // second stage : guy within constraint and shortest
-    for (i = 0; i < nCurrent; i++) {
-        if (population[i].isWithinConstraint()){
-            any_within_constraint = true;
-            break;
+    if(!any_within_constraint) {
+        for (i = 0; i < nCurrent; i++) {
+            if (population[i].isWithinConstraint()){
+                any_within_constraint = true;
+                break;
+            }
         }
     }
+
     if(any_within_constraint){
         int opt_stage = max_stage;
         double min = DBL_MAX;
@@ -395,7 +426,7 @@ void S_GA::oneRun ()
                 bestIndex = i;
             }
             // if equal && within constraint, check if fitness is better
-            if (opt_stage == population[i].getLength() && population[i].isWithinConstraint() && population[i].getFitness() < min) {
+            else if (opt_stage == population[i].getLength() && population[i].isWithinConstraint() && population[i].getFitness() < min) {
                 min = population[i].getFitness();
                 opt_stage = population[i].getLength();
                 bestIndex = i;
