@@ -88,7 +88,7 @@ void GA::initializePopulation ()
 
     for (i = 0; i < nInitial; i++)
         for (j = 0; j < ell; j++)
-			population[i].setVal (j, myRand.uniformInt( 1, 100));
+			population[i].setVal (j, myRand.uniformInt( 1, 90));
 
 }
 
@@ -257,12 +257,12 @@ void GA::extendedLineXO (const Chromosome & p1, const Chromosome & p2, Chromosom
 		do {
 			alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
 			length = (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 ;
-		} while (length <= 0);
+		} while (length <= 0 && length >= 90);
         c1.setVal (i, length);
 		do {
 			alpha = (1+2*alpha_w)*myRand.uniform() - alpha_w;
 			length = (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 ;
-		} while (length <= 0);
+		} while (length <= 0 && length >= 90);
         c2.setVal (i, (int)( alpha*(double)p1.getVal(i) + (1-alpha)*(double)p2.getVal(i)) + 0.5 );
     }
     /*
@@ -321,7 +321,7 @@ void GA::simpleMutation ()
     for (i = 0; i < nNextGeneration; i++)
         for (j = 0; j< ell; j++)
             if (myRand.flip(pm)) {
-                offspring[i].setVal(j, myRand.uniformInt( 1, 100));
+                offspring[i].setVal(j, myRand.uniformInt( 1, 90));
             }
 }
 

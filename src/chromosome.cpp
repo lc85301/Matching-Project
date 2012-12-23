@@ -122,12 +122,12 @@ double Chromosome::matching(){
 		freqratio = s_it->freq() / Chromosome::center_freq;
 		while (Chromosome::device_list[list_index] !='\0' ) {
 			line_length = getVal(list_index);
-			if (line_length > 90 or line_length < 20) { 
-				line_fitness += 10000;
-			}
 			switch(Chromosome::device_list[list_index]){
 			  case 's':
 			  case 'S':
+                  if (line_length < 20) {
+                      line_fitness += 10000;
+                  }
 				  point = ShortStub(point,freqratio*line_length);
 				  break;
 			  case 't':

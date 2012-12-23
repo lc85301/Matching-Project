@@ -184,20 +184,20 @@ void S_GA::tournamentSelection ()
         if(temp < p_winner){
             for (j = 0; j < selectionPressure; j++) {
                 int challenger = randArray[selectionPressure * i + j];
+                int challenger_stage = population[challenger].getLength();
                 double challengerFitness = population[challenger].getFitness ();
 
                 if( population[winner].isWithinConstraint() ) {
                     if( population[challenger].isWithinConstraint()) {
                         // case1: all in constraint
-                        if( opt_stage > population[challenger].getLength()) {
+                        if( opt_stage > challenger_stage) {
                             winner = challenger;
                             winnerFitness = challengerFitness;
-                            opt_stage = population[challenger].getLength();
+                            opt_stage = challenger_stage;
                         }
-                        else if( opt_stage == population[challenger].getLength() && challengerFitness < winnerFitness) {
+                        else if( opt_stage == challenger_stage && challengerFitness < winnerFitness) {
                             winner = challenger;
                             winnerFitness = challengerFitness;
-                            opt_stage = population[challenger].getLength();
                         }
                     }
                     else {
@@ -210,14 +210,14 @@ void S_GA::tournamentSelection ()
                         // case3: challenger in constraint, replace
                             winner = challenger;
                             winnerFitness = challengerFitness;
-                            opt_stage = population[challenger].getLength();
+                            opt_stage = challenger_stage;
                     }
                     else {
                         // case4: all not in constraint
                         if (challengerFitness < winnerFitness) {
                             winner = challenger;
                             winnerFitness = challengerFitness;
-                            opt_stage = population[challenger].getLength();
+                            opt_stage = challenger_stage;
                         }
                     }
                 }
